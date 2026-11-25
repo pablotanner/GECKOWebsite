@@ -1,0 +1,37 @@
+---
+import Icon from '../components/Icon.astro';
+---
+<section class="section section--sunken" id="who" aria-labelledby="who-title">
+  <div class="container">
+    <header class="section__head">
+      <h2 class="display-2" id="who-title">Who it's for</h2>
+    </header>
+    <div class="audience">
+      <div class="audience__lead reveal">
+        <span class="who__lead-icon"><Icon name="wifi" /></span>
+        <h3 class="title-lg">People on public WiFi</h3>
+        <p class="lead">
+          No more guessing which network is real. If a network claims a registered name and doesn't match, you see it
+          before you type anything.
+        </p>
+      </div>
+      <ul class="audience__list">
+        <li class="audience__item reveal" style="--reveal-index: 1">
+          <Icon name="building" />
+          <h3 class="title">Network operators</h3>
+          <p class="caption">Airports, cafés, universities. Register once; impostors using your name get flagged on your customers' phones.</p>
+        </li>
+        <li class="audience__item reveal" style="--reveal-index: 2">
+          <Icon name="landmark" />
+          <h3 class="title">Federations and standards bodies</h3>
+          <p class="caption">eduroam, the Wireless Broadband Alliance: password protection that doesn't rely on every user configuring their device correctly.</p>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .who__lead-icon { color: var(--color-accent-default); }
+  .who__lead-icon :global(.icon) { width: var(--space-8); height: var(--space-8); }
+</style>

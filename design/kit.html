@@ -1,0 +1,689 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GECKOGuard Design Kit</title>
+<meta name="description" content="Tokens, components and patterns for the GECKOGuard website.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="../src/styles/tokens.css">
+<link rel="stylesheet" href="../src/styles/kit.css">
+<style>
+  /* Kit-page-only layout. Uses tokens like everything else. */
+  .kit-section { padding-block: var(--space-16); border-top: var(--border-hairline) solid var(--color-border-default); }
+  .kit-head { display: grid; gap: var(--space-3); margin-bottom: var(--space-10); }
+  .kit-grid { display: grid; gap: var(--space-6); }
+  .kit-row { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }
+  .kit-panel { padding: var(--space-6); border: var(--border-hairline) solid var(--color-border-default); border-radius: var(--radius-lg); background: var(--color-surface-card); display: grid; gap: var(--space-4); align-content: start; }
+  .kit-panel--sunken { background: var(--color-surface-sunken); }
+  .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr)); gap: var(--space-3); }
+  .swatch { display: grid; gap: var(--space-2); font-size: var(--text-xs); }
+  .swatch__chip { height: var(--space-16); border-radius: var(--radius-md); border: var(--border-hairline) solid var(--color-border-default); }
+  .swatch__name { font-family: var(--font-mono); color: var(--color-text-primary); overflow-wrap: anywhere; }
+  .swatch__hex { font-family: var(--font-mono); color: var(--color-text-tertiary); }
+  .type-row { display: grid; gap: var(--space-2); padding-block: var(--space-5); border-bottom: var(--border-hairline) solid var(--color-border-default); }
+  .state-label { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-tertiary); }
+  .state-cell { display: grid; gap: var(--space-2); justify-items: start; }
+  .hero-demo { display: grid; gap: var(--space-10); align-items: center; padding: var(--space-10) var(--space-6); border-radius: var(--radius-xl); border: var(--border-hairline) solid var(--color-border-default); overflow: hidden; }
+  .hero-demo__phone { justify-self: center; }
+  .map-tool { display: grid; gap: var(--space-5); }
+  .map-panel { display: grid; gap: var(--space-4); align-content: start; }
+  .map-explain { min-height: 3lh; }
+  .theme-switch { display: inline-flex; gap: var(--space-1); padding: var(--space-1); border-radius: var(--radius-pill); background: var(--color-surface-sunken); }
+  @media (min-width: 48em) {
+    .kit-grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .kit-grid--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .hero-demo { grid-template-columns: 7fr 5fr; padding: var(--space-16) var(--space-12); }
+  }
+  @media (min-width: 64em) {
+    .map-tool { grid-template-columns: 8fr 4fr; }
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></symbol>
+  <symbol id="i-wifi" viewBox="0 0 24 24"><path d="M12 20h.01"/><path d="M2 8.82a15 15 0 0 1 20 0"/><path d="M5 12.859a10 10 0 0 1 14 0"/><path d="M8.5 16.429a5 5 0 0 1 7 0"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></symbol>
+  <symbol id="i-building" viewBox="0 0 24 24"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></symbol>
+  <symbol id="i-scroll" viewBox="0 0 24 24"><path d="M15 12h-5"/><path d="M15 8h-5"/><path d="M19 17V5a2 2 0 0 0-2-2H4"/><path d="M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+  <symbol id="i-scale" viewBox="0 0 24 24"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-laptop" viewBox="0 0 24 24"><path d="M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9m16 0H4m16 0 1.28 2.55a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45L4 16"/></symbol>
+  <symbol id="i-ban" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+  <symbol id="i-arrow-down" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-external" viewBox="0 0 24 24"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 12h16"/><path d="M4 6h16"/><path d="M4 18h16"/></symbol>
+  <symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"/><circle cx="16.5" cy="7.5" r=".5"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+  <symbol id="i-landmark" viewBox="0 0 24 24"><path d="M3 22h18"/><path d="M6 18v-7"/><path d="M10 18v-7"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M12 2 20 7H4z"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
+  <symbol id="i-github" viewBox="0 0 24 24"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></symbol>
+  <symbol id="i-plane" viewBox="0 0 24 24"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></symbol>
+</svg>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ====================================================== NAV (component) -->
+<header class="nav" id="nav" data-scrolled="false" data-open="false">
+  <div class="container nav__inner">
+    <a class="logo" href="#top" aria-label="GECKOGuard design kit, top">
+      <svg class="logo__mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <g class="logo__corner" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11V6a2 2 0 0 1 2-2h5"/><path d="M21 4h5a2 2 0 0 1 2 2v5"/><path d="M28 21v5a2 2 0 0 1-2 2h-5"/><path d="M11 28H6a2 2 0 0 1-2-2v-5"/></g>
+        <circle class="logo__dot" cx="16" cy="16" r="7"/>
+        <path class="logo__tick" d="m12.75 16.25 2.25 2.25 4.25-4.75" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="logo__word">GECKOGuard <span>kit</span></span>
+    </a>
+    <button class="btn btn--ghost btn--icon nav__toggle" type="button" aria-expanded="false" aria-controls="nav-tabs" id="nav-toggle">
+      <svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span class="visually-hidden">Menu</span>
+    </button>
+    <ul class="nav__tabs" id="nav-tabs">
+      <li><a class="nav__tab" href="#concept">Concept</a></li>
+      <li><a class="nav__tab" href="#color">Colour</a></li>
+      <li><a class="nav__tab" href="#type">Type</a></li>
+      <li><a class="nav__tab" href="#verdicts">Verdicts</a></li>
+      <li><a class="nav__tab" href="#controls">Controls</a></li>
+      <li><a class="nav__tab" href="#patterns">Patterns</a></li>
+      <li><a class="nav__tab" href="#map">Map</a></li>
+      <li><a class="nav__tab" href="#content">Content</a></li>
+      <li>
+        <div class="theme-switch" role="group" aria-label="Colour theme">
+          <button class="btn btn--ghost btn--sm btn--icon" type="button" data-theme-set="light" aria-pressed="false"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-sun"/></svg><span class="visually-hidden">Light</span></button>
+          <button class="btn btn--ghost btn--sm btn--icon" type="button" data-theme-set="dark" aria-pressed="false"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-moon"/></svg><span class="visually-hidden">Dark</span></button>
+        </div>
+      </li>
+    </ul>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ====================================================== HERO (composition) -->
+<section class="container" id="top" style="padding-block: var(--space-12) var(--space-16)">
+  <div class="hero-demo survey-grid">
+    <div class="stack" style="gap: var(--space-6)">
+      <p class="coord">Design kit · v1 · The Register</p>
+      <h1 class="display-1">Is this WiFi really who it says it is?</h1>
+      <p class="lead">GECKOGuard checks every network against a public register of who is allowed to run which WiFi, where. Impostors get caught before you type anything.</p>
+      <div class="cluster">
+        <a class="btn btn--primary" href="#patterns">See the attack <svg class="icon icon--sm" aria-hidden="true"><use href="#i-arrow-down"/></svg></a>
+        <a class="btn btn--secondary" href="#patterns">How it works</a>
+      </div>
+    </div>
+    <div class="hero-demo__phone phone" aria-label="Phone showing two networks with the same name" role="img">
+      <div class="phone__screen">
+        <div class="phone__status"><span>09:41</span><span>GECKOGuard</span></div>
+        <div class="phone__header">
+          <p class="title">WiFi</p>
+          <p class="caption">Skyport Terminal 2</p>
+        </div>
+        <div class="phone__body">
+          <div class="network" data-verdict="verified">
+            <svg class="icon network__icon" aria-hidden="true"><use href="#i-wifi"/></svg>
+            <span class="network__ssid">Skyport Free WiFi</span>
+            <span class="network__meta"><span class="chip chip--verified"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg><span>Verified</span></span></span>
+          </div>
+          <div class="network" data-verdict="conflict">
+            <svg class="icon network__icon" aria-hidden="true"><use href="#i-wifi"/></svg>
+            <span class="network__ssid">Skyport Free WiFi</span>
+            <span class="network__meta"><span class="chip chip--conflict"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><span>Conflict</span></span></span>
+          </div>
+          <div class="network">
+            <svg class="icon network__icon" aria-hidden="true"><use href="#i-wifi"/></svg>
+            <span class="network__ssid">BeanThere Guest</span>
+            <span class="network__meta"><span class="chip chip--unverified"><svg class="icon" aria-hidden="true"><use href="#i-help"/></svg><span>Unverified</span></span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== CONCEPT -->
+<section class="kit-section" id="concept">
+  <div class="container">
+    <div class="kit-head">
+      <h2 class="display-2">The Register</h2>
+      <p class="lead">A land registry records who owns which parcel. GECKO records who may run which network in which area. The kit borrows from survey maps and official records: parcels, hatching, corner markers, monospaced entries. Calm, exact, and accountable, never a hacker aesthetic.</p>
+    </div>
+    <div class="kit-grid kit-grid--3">
+      <div class="kit-panel">
+        <p class="title">Verdicts are the loudest thing</p>
+        <p class="caption">Green and red are reserved for Verified and Conflict. The primary button is ink, and the one brand accent is cobalt, so a verdict never competes with chrome.</p>
+      </div>
+      <div class="kit-panel">
+        <p class="title">Machines print in mono</p>
+        <p class="caption">SSIDs, domains, coordinates, timestamps and certificate fields are set in JetBrains Mono. Everything a person reads is IBM Plex Sans.</p>
+      </div>
+      <div class="kit-panel">
+        <p class="title">Registered means hatched</p>
+        <p class="caption">Any registered area is a cobalt dashed parcel with survey hatching. The reader's phone is cobalt too: you and the register share one colour.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== COLOUR -->
+<section class="kit-section" id="color">
+  <div class="container">
+    <div class="kit-head">
+      <h2 class="display-2">Colour</h2>
+      <p class="lead">Semantic tokens only. Values below are read live from the page, so switch the theme to see dark mode. Source: <code>design/tokens/colors.json</code>.</p>
+    </div>
+    <div class="stack" style="gap: var(--space-10)">
+      <div class="stack"><p class="label">Surfaces and text</p><div class="swatches" data-swatches="surface-page surface-card surface-sunken surface-inverse text-primary text-secondary text-tertiary border-default border-strong"></div></div>
+      <div class="stack"><p class="label">Accent and action</p><div class="swatches" data-swatches="accent-default accent-subtle action-primary action-primary-hover focus-ring"></div></div>
+      <div class="stack"><p class="label">Verdicts</p><div class="swatches" data-swatches="verdict-verified-fg verdict-verified-bg verdict-conflict-fg verdict-conflict-bg verdict-unverified-fg verdict-unverified-bg"></div></div>
+      <div class="stack"><p class="label">Map</p><div class="swatches" data-swatches="map-ground map-building map-road map-area-stroke map-area-fill map-attacker"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== TYPE -->
+<section class="kit-section" id="type">
+  <div class="container">
+    <div class="kit-head">
+      <h2 class="display-2">Type</h2>
+      <p class="lead">Two families, fluid display sizes. The hero headline is at least 2.5 times body size and wraps on an 18ch measure.</p>
+    </div>
+    <div>
+      <div class="type-row"><span class="state-label">display-1 · Plex Sans 600 · 42 to 76</span><p class="display-1">Your phone trusts any name.</p></div>
+      <div class="type-row"><span class="state-label">display-2 · Plex Sans 600 · 34 to 52</span><p class="display-2">It's worse for enterprise WiFi.</p></div>
+      <div class="type-row"><span class="state-label">title-lg / title · Plex Sans 600</span><p class="title-lg">Where the attacker fails</p><p class="title">Register</p></div>
+      <div class="type-row"><span class="state-label">lead · Plex Sans 400 · 18 to 21</span><p class="lead">Two networks, both called <span class="mono">Skyport Free WiFi</span>. One is the airport's, one is an attacker's laptop.</p></div>
+      <div class="type-row"><span class="state-label">body · Plex Sans 400 · 17 / 1.6 · 66ch</span><p class="prose">A network's name can be copied; a registration for that place can't. GECKO lets an operator register, for a physical area, which identities their network presents, and your phone checks what it sees against that.</p></div>
+      <div class="type-row"><span class="state-label">mono · JetBrains Mono · SSIDs, domains, fields</span><p class="mono">wifi.skyport.example · Skyport Free WiFi · 47.4502 N 8.5618 E</p></div>
+      <div class="type-row"><span class="state-label">coord · mono caps · map and figure annotations</span><p class="coord">Terminal 2 · Gate B · r 50 m</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== VERDICTS -->
+<section class="kit-section" id="verdicts">
+  <div class="container">
+    <div class="kit-head">
+      <h2 class="display-2">Verdicts</h2>
+      <p class="lead">The motif of the whole site. Always icon plus word, in every place they appear: hero, quiz, flow, map, FAQ.</p>
+    </div>
+    <div class="kit-grid kit-grid--2">
+      <div class="kit-panel">
+        <p class="label">Default size</p>
+        <div class="kit-row">
+          <span class="chip chip--verified"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg><span>Verified</span></span>
+          <span class="chip chip--conflict"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><span>Conflict</span></span>
+          <span class="chip chip--unverified"><svg class="icon" aria-hidden="true"><use href="#i-help"/></svg><span>Unverified</span></span>
+          <span class="chip chip--checking" role="status"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><span>Checking</span></span>
+        </div>
+        <p class="label">Large (hero, reveals)</p>
+        <div class="kit-row">
+          <span class="chip chip--lg chip--verified"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg><span>Verified</span></span>
+          <span class="chip chip--lg chip--conflict"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><span>Conflict</span></span>
+          <span class="chip chip--lg chip--unverified"><svg class="icon" aria-hidden="true"><use href="#i-help"/></svg><span>Unverified</span></span>
+        </div>
+      </div>
+      <div class="kit-panel">
+        <p class="label">Meaning (use these words)</p>
+        <dl class="geocert__fields" style="font-size: var(--text-base)">
+          <dt>Verified</dt><dd style="font-family: var(--font-sans)">Matches what is registered here.</dd>
+          <dt>Conflict</dt><dd style="font-family: var(--font-sans)">Claims to be a registered network but doesn't match: likely an impostor.</dd>
+          <dt>Unverified</dt><dd style="font-family: var(--font-sans)">Nothing registered to compare with. Not necessarily bad, just unknown.</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== CONTROLS -->
+<section class="kit-section" id="controls">
+  <div class="container">
+    <div class="kit-head">
+      <h2 class="display-2">Controls</h2>
+      <p class="lead">Pill buttons, one primary per view. Every control ships its states; hover and focus are live on this page.</p>
+    </div>
+    <div class="stack" style="gap: var(--space-8)">
+      <div class="kit-panel">
+        <p class="label">Button states</p>
+        <div class="kit-grid kit-grid--3">
+          <div class="state-cell"><span class="state-label">primary</span><button class="btn btn--primary" type="button">See the attack</button></div>
+          <div class="state-cell"><span class="state-label">secondary</span><button class="btn btn--secondary" type="button">How it works</button></div>
+          <div class="state-cell"><span class="state-label">ghost</span><button class="btn btn--ghost" type="button"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-reset"/></svg>Reset</button></div>
+          <div class="state-cell"><span class="state-label">selected (aria-pressed)</span><button class="btn btn--secondary" type="button" aria-pressed="true">This one is real</button></div>
+          <div class="state-cell"><span class="state-label">loading (aria-busy)</span><button class="btn btn--primary" type="button" aria-busy="true">Checking</button></div>
+          <div class="state-cell"><span class="state-label">disabled</span><button class="btn btn--primary" type="button" disabled>Connect</button></div>
+          <div class="state-cell"><span class="state-label">external link</span><a class="btn btn--secondary btn--sm" href="#content"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-github"/></svg>GitHub<svg class="icon icon--sm" aria-hidden="true"><use href="#i-external"/></svg></a></div>
+          <div class="state-cell"><span class="state-label">small</span><button class="btn btn--secondary btn--sm" type="button">Drop attacker</button></div>
+          <div class="state-cell"><span class="state-label">inline link</span><p>Read <a href="#content">how proofs work</a>.</p></div>
+        </div>
+      </div>
+      <div class="kit-grid kit-grid--2">
+        <div class="kit-panel">
+          <p class="label">Listbox (replaces native select)</p>
+          <div class="listbox" data-listbox>
+            <span class="label" id="lb-label">Attacker copies</span>
+            <button class="listbox__trigger" type="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="lb-label lb-value" id="lb-trigger">
+              <span id="lb-value">Skyport Free WiFi</span>
+              <svg class="icon icon--sm" aria-hidden="true"><use href="#i-chevron"/></svg>
+            </button>
+            <ul class="listbox__popup" role="listbox" aria-labelledby="lb-label" tabindex="-1" hidden>
+              <li class="listbox__option" role="option" aria-selected="true" data-value="Skyport Free WiFi">Skyport Free WiFi<svg class="icon icon--sm" aria-hidden="true"><use href="#i-check"/></svg></li>
+              <li class="listbox__option" role="option" aria-selected="false" data-value="BeanThere Guest">BeanThere Guest<svg class="icon icon--sm" aria-hidden="true"><use href="#i-check"/></svg></li>
+              <li class="listbox__option" role="option" aria-selected="false" data-value="Northfield Campus">Northfield Campus<svg class="icon icon--sm" aria-hidden="true"><use href="#i-check"/></svg></li>
+              <li class="listbox__option" role="option" aria-selected="false" data-value="custom">Custom name...<svg class="icon icon--sm" aria-hidden="true"><use href="#i-check"/></svg></li>
+            </ul>
+          </div>
+          <div class="listbox">
+            <span class="label" id="lb2-label">Disabled</span>
+            <button class="listbox__trigger" type="button" disabled aria-labelledby="lb2-label"><span>No attacker placed</span><svg class="icon icon--sm" aria-hidden="true"><use href="#i-chevron"/></svg></button>
+          </div>
+        </div>
+        <div class="kit-panel">
+          <p class="label">Text field</p>
+          <div class="field">
+            <label class="label" for="f1">Custom network name</label>
+            <input class="input" id="f1" placeholder="e.g. Skyport Free WiFi 2" aria-describedby="f1-hint">
+            <span class="field__hint" id="f1-hint">Up to 32 characters, like a real SSID.</span>
+          </div>
+          <div class="field">
+            <label class="label" for="f2">With error</label>
+            <input class="input" id="f2" value="This name is far too long to be a network name" aria-invalid="true" aria-describedby="f2-err">
+            <span class="field__error" id="f2-err"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-alert"/></svg>Network names are at most 32 characters.</span>
+          </div>
+          <div class="field">
+            <label class="label" for="f3">Disabled</label>
+            <input class="input" id="f3" value="Skyport Free WiFi" disabled>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== PATTERNS -->
+<section class="kit-section" id="patterns">
+  <div class="container stack" style="gap: var(--space-16)">
+    <div class="kit-head" style="margin: 0">
+      <h2 class="display-2">Patterns</h2>
+      <p class="lead">Composed from the components above. Each section of the site uses a different layout so the page never repeats its own rhythm.</p>
+    </div>
+
+    <!-- Spot the fake -->
+    <div class="stack" style="gap: var(--space-6)">
+      <p class="label">Spot the fake: captive portal pair (Problem)</p>
+      <div class="kit-grid kit-grid--2" data-quiz>
+        <article class="portal" data-real="true">
+          <div class="portal__bar"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-lock"/></svg><span class="portal__url">login.skyport-wifi.example</span></div>
+          <div class="portal__body">
+            <p class="portal__brand"><svg class="icon" aria-hidden="true"><use href="#i-plane"/></svg>Skyport</p>
+            <p class="title">Welcome to Skyport Free WiFi</p>
+            <div class="portal__field">Email<span class="portal__input">you@example.com</span></div>
+            <button class="btn btn--secondary" type="button" aria-pressed="false" data-pick>This one is real</button>
+          </div>
+          <div class="portal__foot portal__reveal">
+            <p class="caption">What GECKOGuard sees</p>
+            <p class="mono">login.skyport-wifi.example</p>
+            <span class="chip chip--verified"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg><span>Verified</span></span>
+            <p class="caption">Registered for this terminal.</p>
+          </div>
+        </article>
+        <article class="portal" data-real="false">
+          <div class="portal__bar"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-lock"/></svg><span class="portal__url">login.skyport-wlfi.example</span></div>
+          <div class="portal__body">
+            <p class="portal__brand"><svg class="icon" aria-hidden="true"><use href="#i-plane"/></svg>Skyport</p>
+            <p class="title">Welcome to Skyport Free WiFi</p>
+            <div class="portal__field">Email<span class="portal__input">you@example.com</span></div>
+            <button class="btn btn--secondary" type="button" aria-pressed="false" data-pick>This one is real</button>
+          </div>
+          <div class="portal__foot portal__reveal">
+            <p class="caption">What GECKOGuard sees</p>
+            <p class="mono">login.skyport-wlfi.example</p>
+            <span class="chip chip--conflict"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><span>Conflict</span></span>
+            <p class="caption">Not the sign-in page registered here.</p>
+          </div>
+        </article>
+      </div>
+      <p class="lead" data-quiz-msg aria-live="polite"></p>
+    </div>
+
+    <!-- Facts -->
+    <div class="stack" style="gap: var(--space-6)">
+      <p class="label">Facts: one leads (Problem)</p>
+      <div class="facts">
+        <div class="fact fact--lead">
+          <p class="title-lg">A network name is just a label anyone can set.</p>
+          <p class="fact__text">Any laptop can broadcast <span class="mono">Skyport Free WiFi</span>. Nothing checks it.</p>
+        </div>
+        <div class="fact"><p class="title">Your phone auto-joins names it has seen before.</p></div>
+        <div class="fact"><p class="title">The sign-in page can ask for anything.</p><p class="fact__text">Email, card details, passwords.</p></div>
+      </div>
+    </div>
+
+    <!-- Flow -->
+    <div class="stack" style="gap: var(--space-8)">
+      <p class="label">Four-step flow (How it works)</p>
+      <ol class="flow">
+        <li class="flow__step"><span class="flow__node"><svg class="icon" aria-hidden="true"><use href="#i-building"/></svg></span><span class="flow__num">Operator + Geo CA</span><span class="flow__title">Register</span><p class="flow__text">The airport proves it operates at this address and registers its network.</p></li>
+        <li class="flow__step"><span class="flow__node"><svg class="icon" aria-hidden="true"><use href="#i-scroll"/></svg></span><span class="flow__num">GECKO map</span><span class="flow__title">Publish</span><p class="flow__text">The GeoCert goes into a public map. Entries can't be quietly added or hidden.</p></li>
+        <li class="flow__step"><span class="flow__node"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg></span><span class="flow__num">Your phone</span><span class="flow__title">Look up</span><p class="flow__text">"Which networks are registered where I am?" The answer comes with a proof.</p></li>
+        <li class="flow__step"><span class="flow__node"><svg class="icon" aria-hidden="true"><use href="#i-scale"/></svg></span><span class="flow__num">GECKOGuard</span><span class="flow__title">Compare</span><p class="flow__text">What the phone sees is compared with what is registered.</p></li>
+      </ol>
+      <p class="title-lg">Where the attacker fails</p>
+      <ol class="flow flow--attack">
+        <li class="flow__step"><span class="flow__node"><svg class="icon" aria-hidden="true"><use href="#i-laptop"/></svg></span><span class="flow__num">Register</span><span class="flow__stop"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-ban"/></svg>Stopped</span><p class="flow__text">Can't get a GeoCert for a place it doesn't operate.</p></li>
+        <li class="flow__step"><span class="flow__node"><svg class="icon" aria-hidden="true"><use href="#i-laptop"/></svg></span><span class="flow__num">Publish</span><span class="flow__stop"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-ban"/></svg>Stopped</span><p class="flow__text">Can't hide the real registration from the map.</p></li>
+        <li class="flow__step"><span class="flow__node"><svg class="icon" aria-hidden="true"><use href="#i-laptop"/></svg></span><span class="flow__num">Look up</span><span class="flow__stop"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-ban"/></svg>Stopped</span><p class="flow__text">Can't forge the answer. The proof wouldn't check out.</p></li>
+        <li class="flow__step"><span class="flow__node"><svg class="icon" aria-hidden="true"><use href="#i-laptop"/></svg></span><span class="flow__num">Compare</span><span class="flow__stop"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-alert"/></svg>Flagged</span><p class="flow__text">Its network doesn't match, so it's flagged as a Conflict.</p></li>
+      </ol>
+    </div>
+
+    <!-- GeoCert + video -->
+    <div class="kit-grid kit-grid--2" style="align-items: start">
+      <div class="stack" style="gap: var(--space-6)">
+        <p class="label">GeoCert card (flow, technical page)</p>
+        <article class="geocert" aria-label="Example GeoCert">
+          <div class="geocert__head">
+            <span class="geocert__kind"><svg class="icon geocert__seal" aria-hidden="true"><use href="#i-shield"/></svg>GeoCert</span>
+            <span class="chip chip--verified"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg><span>Verified</span></span>
+          </div>
+          <div class="geocert__area survey-grid"><div class="geocert__parcel hatch"></div></div>
+          <hr class="geocert__rule">
+          <dl class="geocert__fields">
+            <dt>Network</dt><dd>Skyport Free WiFi</dd>
+            <dt>Security</dt><dd>open + captive portal</dd>
+            <dt>Sign-in page</dt><dd>login.skyport-wifi.example</dd>
+            <dt>Area</dt><dd>Skyport Terminal 2</dd>
+          </dl>
+          <hr class="geocert__rule">
+          <div class="geocert__issuer"><span class="caption">Issued by Example Geo CA</span><span class="coord">valid to 2027-06</span></div>
+        </article>
+      </div>
+      <div class="stack" style="gap: var(--space-6)">
+        <p class="label">Video slot with placeholder (Demo, Enterprise)</p>
+        <figure class="video">
+          <div class="video__tag"><p class="title">With GECKOGuard</p><span class="chip chip--conflict"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><span>Conflict</span></span></div>
+          <div class="video__frame survey-grid" style="max-height: 24rem">
+            <div class="video__placeholder">
+              <span class="video__play"><svg class="icon" aria-hidden="true"><use href="#i-play"/></svg></span>
+              <p class="title">Video coming soon</p>
+              <p class="caption">attack-with.mp4</p>
+            </div>
+          </div>
+          <ol class="timeline">
+            <li><time>0:03</time>Phone joins Skyport Free WiFi</li>
+            <li><time>0:06</time>GECKOGuard looks up this terminal</li>
+            <li><time>0:09</time>Conflict shown before anything is typed</li>
+          </ol>
+        </figure>
+      </div>
+    </div>
+
+    <!-- Audience -->
+    <div class="stack" style="gap: var(--space-6)">
+      <p class="label">Audience: lead card plus quiet list (Who it's for)</p>
+      <div class="audience">
+        <div class="audience__lead">
+          <svg class="icon" aria-hidden="true" style="width: var(--space-8); height: var(--space-8); color: var(--color-accent-default)"><use href="#i-wifi"/></svg>
+          <p class="title-lg">People on public WiFi</p>
+          <p class="lead">No more guessing which network is real. If something claims a registered name and doesn't match, you see it before you type.</p>
+        </div>
+        <ul class="audience__list">
+          <li class="audience__item"><svg class="icon" aria-hidden="true"><use href="#i-building"/></svg><p class="title">Network operators</p><p class="caption">Register once; impostors using your name get flagged on your customers' phones.</p></li>
+          <li class="audience__item"><svg class="icon" aria-hidden="true"><use href="#i-landmark"/></svg><p class="title">Federations and standards bodies</p><p class="caption">Password protection that doesn't rely on every user configuring their device correctly.</p></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== MAP -->
+<section class="kit-section" id="map">
+  <div class="container">
+    <div class="kit-head">
+      <h2 class="display-2">Map primitives</h2>
+      <p class="lead">Ground, buildings, roads, a registered parcel, the phone with its lookup radius, and access points. Drag the phone or the attacker, or focus one and use the arrow keys.</p>
+    </div>
+    <div class="map-tool">
+      <div class="map" id="kit-map">
+        <svg viewBox="0 0 640 400" role="group" aria-label="Fictional area map">
+          <defs>
+            <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)" class="map-area-hatch"><line x1="0" y1="0" x2="0" y2="7"/></pattern>
+          </defs>
+          <rect class="map-ground" width="640" height="400"/>
+          <path class="map-road" d="M0 300 H640" stroke-width="28"/>
+          <path class="map-road" d="M470 0 V400" stroke-width="22"/>
+          <rect class="map-building" x="40" y="40" width="360" height="220" rx="6"/>
+          <rect class="map-building" x="510" y="40" width="100" height="110" rx="6"/>
+          <rect class="map-building" x="510" y="330" width="100" height="56" rx="6"/>
+          <polygon class="map-area" points="56,56 384,56 384,244 56,244"/>
+          <polygon points="56,56 384,56 384,244 56,244" fill="url(#hatch)" pointer-events="none"/>
+          <text class="map-label" x="72" y="82">Skyport Terminal</text>
+          <text class="map-label--ssid map-label" x="72" y="100">Skyport Free WiFi registered</text>
+          <text class="map-label" x="516" y="64">BeanThere</text>
+          <text class="map-label--ssid map-label" x="516" y="82">nothing registered</text>
+          <g class="map-ap" transform="translate(300 170)">
+            <circle class="map-ap__mast" r="16"/>
+            <g transform="translate(-9 -9) scale(0.75)"><path class="map-ap__glyph" d="M12 20h.01M2 8.82a15 15 0 0 1 20 0M5 12.859a10 10 0 0 1 14 0M8.5 16.429a5 5 0 0 1 7 0"/></g>
+          </g>
+          <g class="map-handle map-ap map-ap--attacker" id="h-attacker" tabindex="0" role="button" aria-label="Attacker access point. Arrow keys move it." transform="translate(560 250)">
+            <circle class="map-focus" r="24"/>
+            <circle class="map-ap__mast" r="16"/>
+            <g transform="translate(-9 -9) scale(0.75)"><path class="map-ap__glyph" d="M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9m16 0H4m16 0 1.28 2.55a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45L4 16"/></g>
+          </g>
+          <g class="map-handle map-phone" id="h-phone" tabindex="0" role="button" aria-label="Your phone. Arrow keys move it." transform="translate(200 180)">
+            <circle class="map-radius" r="70"/>
+            <circle class="map-focus" r="20"/>
+            <rect class="map-phone__body" x="-9" y="-15" width="18" height="30" rx="4"/>
+            <rect class="map-phone__screen" x="-6" y="-11" width="12" height="19" rx="1.5"/>
+          </g>
+        </svg>
+      </div>
+      <div class="map-panel">
+        <div class="phone" style="width: 100%; aspect-ratio: auto">
+          <div class="phone__screen">
+            <div class="phone__status"><span>Nearby networks</span><span id="map-where">Terminal</span></div>
+            <div class="phone__body" id="map-list" style="padding-bottom: var(--space-3)" aria-live="polite"></div>
+          </div>
+        </div>
+        <p class="map-explain" id="map-explain"></p>
+        <button class="btn btn--ghost" type="button" id="map-reset" style="justify-self: start"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-reset"/></svg>Reset</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== CONTENT -->
+<section class="kit-section" id="content">
+  <div class="container kit-grid kit-grid--2" style="align-items: start">
+    <div class="stack" style="gap: var(--space-6)">
+      <p class="label">Accordion (FAQ)</p>
+      <div class="accordion" data-accordion>
+        <div class="accordion__item">
+          <h3><button class="accordion__trigger" type="button" aria-expanded="true" aria-controls="faq-1" id="faq-1-t">Does it work everywhere?<svg class="icon" aria-hidden="true"><use href="#i-chevron"/></svg></button></h3>
+          <div class="accordion__panel" id="faq-1" role="region" aria-labelledby="faq-1-t"><p>Only where networks are registered. Elsewhere you get <strong>Unverified</strong>, which is no worse than today.</p></div>
+        </div>
+        <div class="accordion__item">
+          <h3><button class="accordion__trigger" type="button" aria-expanded="false" aria-controls="faq-2" id="faq-2-t">What if the attacker blocks the lookup?<svg class="icon" aria-hidden="true"><use href="#i-chevron"/></svg></button></h3>
+          <div class="accordion__panel" id="faq-2" role="region" aria-labelledby="faq-2-t" hidden><p>Then the network can't be verified, so it never shows <strong>Verified</strong>.</p></div>
+        </div>
+        <div class="accordion__item">
+          <h3><button class="accordion__trigger" type="button" aria-expanded="false" aria-controls="faq-3" id="faq-3-t">Is it available?<svg class="icon" aria-hidden="true"><use href="#i-chevron"/></svg></button></h3>
+          <div class="accordion__panel" id="faq-3" role="region" aria-labelledby="faq-3-t" hidden><p>It's a research prototype, not a store app.</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="stack" style="gap: var(--space-6)">
+      <p class="label">Note (footnotes, honest limits)</p>
+      <p class="note"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg><span>This map illustrates the idea. It is not a simulation of the protocol: no lookup, proof or certificate check runs here.</span></p>
+      <p class="label">Footer</p>
+      <footer class="footer" style="padding-block: var(--space-8) 0">
+        <div class="stack">
+          <a class="logo" href="#top"><svg class="logo__mark" viewBox="0 0 32 32" fill="none" aria-hidden="true"><g class="logo__corner" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11V6a2 2 0 0 1 2-2h5"/><path d="M21 4h5a2 2 0 0 1 2 2v5"/><path d="M28 21v5a2 2 0 0 1-2 2h-5"/><path d="M11 28H6a2 2 0 0 1-2-2v-5"/></g><circle class="logo__dot" cx="16" cy="16" r="7"/><path class="logo__tick" d="m12.75 16.25 2.25 2.25 4.25-4.75" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="logo__word">GECKOGuard</span></a>
+          <p class="caption">Thesis title to come. MSc thesis, ETH Zürich, Network Security Group. Based on GeoPKI.</p>
+        </div>
+      </footer>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+(() => {
+  const root = document.documentElement;
+
+  /* theme */
+  const themeBtns = document.querySelectorAll('[data-theme-set]');
+  const syncTheme = () => {
+    const forced = root.dataset.theme;
+    const dark = forced ? forced === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    themeBtns.forEach(b => b.setAttribute('aria-pressed', String((b.dataset.themeSet === 'dark') === dark)));
+    paintSwatches();
+  };
+  themeBtns.forEach(b => b.addEventListener('click', () => { root.dataset.theme = b.dataset.themeSet; syncTheme(); }));
+
+  /* swatches read live values */
+  function paintSwatches() {
+    const cs = getComputedStyle(root);
+    document.querySelectorAll('[data-swatches]').forEach(el => {
+      el.innerHTML = el.dataset.swatches.split(' ').map(n => {
+        const v = cs.getPropertyValue('--color-' + n).trim();
+        return `<div class="swatch"><div class="swatch__chip" style="background: var(--color-${n})"></div><span class="swatch__name">${n}</span><span class="swatch__hex">${v}</span></div>`;
+      }).join('');
+    });
+  }
+
+  /* nav: mobile toggle, scrolled border, scroll-spy */
+  const nav = document.getElementById('nav');
+  const toggle = document.getElementById('nav-toggle');
+  toggle.addEventListener('click', () => {
+    const open = nav.dataset.open !== 'true';
+    nav.dataset.open = String(open); toggle.setAttribute('aria-expanded', String(open));
+  });
+  document.querySelectorAll('.nav__tab').forEach(a => a.addEventListener('click', () => { nav.dataset.open = 'false'; toggle.setAttribute('aria-expanded', 'false'); }));
+  addEventListener('scroll', () => { nav.dataset.scrolled = String(scrollY > 8); }, { passive: true });
+  const tabs = [...document.querySelectorAll('.nav__tab')];
+  const spy = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      tabs.forEach(t => t.hash === '#' + e.target.id ? t.setAttribute('aria-current', 'true') : t.removeAttribute('aria-current'));
+    });
+  }, { rootMargin: '-45% 0px -50% 0px' });
+  tabs.forEach(t => { const s = document.querySelector(t.hash); if (s) spy.observe(s); });
+
+  /* quiz */
+  const quiz = document.querySelector('[data-quiz]');
+  const msg = document.querySelector('[data-quiz-msg]');
+  quiz.querySelectorAll('[data-pick]').forEach(btn => btn.addEventListener('click', () => {
+    quiz.querySelectorAll('.portal').forEach(p => {
+      const mine = p.contains(btn);
+      p.dataset.picked = String(mine); p.dataset.revealed = 'true';
+      p.querySelector('[data-pick]').setAttribute('aria-pressed', String(mine));
+    });
+    msg.textContent = "You couldn't tell, and neither can your phone. They look the same because copying a page is trivial.";
+  }));
+
+  /* accordion */
+  document.querySelectorAll('.accordion__trigger').forEach(t => t.addEventListener('click', () => {
+    const open = t.getAttribute('aria-expanded') !== 'true';
+    t.setAttribute('aria-expanded', String(open));
+    document.getElementById(t.getAttribute('aria-controls')).hidden = !open;
+  }));
+
+  /* listbox */
+  const lb = document.querySelector('[data-listbox]');
+  const trig = lb.querySelector('.listbox__trigger');
+  const pop = lb.querySelector('.listbox__popup');
+  const opts = [...pop.querySelectorAll('[role=option]')];
+  let active = 0;
+  const setActive = i => { active = (i + opts.length) % opts.length; opts.forEach((o, j) => o.dataset.active = String(j === active)); pop.setAttribute('aria-activedescendant', opts[active].id); };
+  opts.forEach((o, i) => o.id = 'lb-opt-' + i);
+  const openLb = () => { pop.hidden = false; trig.setAttribute('aria-expanded', 'true'); setActive(opts.findIndex(o => o.getAttribute('aria-selected') === 'true')); pop.focus(); };
+  const closeLb = (focus = true) => { pop.hidden = true; trig.setAttribute('aria-expanded', 'false'); if (focus) trig.focus(); };
+  const choose = i => { opts.forEach((o, j) => o.setAttribute('aria-selected', String(j === i))); document.getElementById('lb-value').textContent = opts[i].dataset.value === 'custom' ? 'Custom name' : opts[i].dataset.value; closeLb(); window.dispatchEvent(new CustomEvent('ssidchange', { detail: opts[i].dataset.value })); };
+  trig.addEventListener('click', () => pop.hidden ? openLb() : closeLb());
+  trig.addEventListener('keydown', e => { if (['ArrowDown', 'ArrowUp'].includes(e.key)) { e.preventDefault(); openLb(); } });
+  opts.forEach((o, i) => o.addEventListener('click', () => choose(i)));
+  pop.addEventListener('keydown', e => {
+    const k = e.key;
+    if (k === 'ArrowDown') setActive(active + 1);
+    else if (k === 'ArrowUp') setActive(active - 1);
+    else if (k === 'Home') setActive(0);
+    else if (k === 'End') setActive(opts.length - 1);
+    else if (k === 'Enter' || k === ' ') choose(active);
+    else if (k === 'Escape' || k === 'Tab') { closeLb(k === 'Escape'); return; }
+    else if (k.length === 1) { const i = opts.findIndex(o => o.textContent.toLowerCase().startsWith(k.toLowerCase())); if (i >= 0) setActive(i); }
+    else return;
+    e.preventDefault();
+  });
+  document.addEventListener('pointerdown', e => { if (!lb.contains(e.target) && !pop.hidden) closeLb(false); });
+
+  /* map: illustrative verdict logic */
+  const svg = document.querySelector('#kit-map svg');
+  const area = { x1: 56, y1: 56, x2: 384, y2: 244, ssid: 'Skyport Free WiFi' };
+  const realAp = { x: 300, y: 170, ssid: 'Skyport Free WiFi' };
+  const start = { phone: { x: 200, y: 180 }, attacker: { x: 560, y: 250 } };
+  const pos = structuredClone(start);
+  let attackerSsid = 'Skyport Free WiFi';
+  const RANGE = 220;
+  const inArea = p => p.x >= area.x1 && p.x <= area.x2 && p.y >= area.y1 && p.y <= area.y2;
+  const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+  const chip = v => ({
+    verified: '<span class="chip chip--verified"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg><span>Verified</span></span>',
+    conflict: '<span class="chip chip--conflict"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><span>Conflict</span></span>',
+    unverified: '<span class="chip chip--unverified"><svg class="icon" aria-hidden="true"><use href="#i-help"/></svg><span>Unverified</span></span>'
+  })[v];
+  window.addEventListener('ssidchange', e => { attackerSsid = e.detail === 'custom' ? 'Skyport Free WiFi 2' : e.detail; render(); });
+  function render() {
+    document.getElementById('h-phone').setAttribute('transform', `translate(${pos.phone.x} ${pos.phone.y})`);
+    document.getElementById('h-attacker').setAttribute('transform', `translate(${pos.attacker.x} ${pos.attacker.y})`);
+    const here = inArea(pos.phone);
+    document.getElementById('map-where').textContent = here ? 'Terminal' : 'Outside';
+    const rows = [];
+    let explain = 'Nothing is registered where the phone is, so every network is Unverified. No worse than today.';
+    if (dist(pos.phone, realAp) < RANGE) rows.push({ ssid: realAp.ssid, v: here ? 'verified' : 'unverified' });
+    if (dist(pos.phone, pos.attacker) < RANGE) {
+      const claims = here && attackerSsid === area.ssid;
+      rows.push({ ssid: attackerSsid, v: claims ? 'conflict' : 'unverified' });
+      if (claims) explain = `The attacker copied ${attackerSsid}, but its sign-in page isn't the one registered for this terminal.`;
+      else if (here) explain = 'The attacker uses a name nobody registered here, so it is Unverified. It cannot borrow the terminal\'s trust.';
+    }
+    if (here && !rows.some(r => r.v === 'conflict')) explain = rows.length ? 'The real network matches what is registered for this terminal.' : explain;
+    document.getElementById('map-list').innerHTML = rows.length ? rows.map(r => `<div class="network" data-verdict="${r.v}"><svg class="icon network__icon" aria-hidden="true"><use href="#i-wifi"/></svg><span class="network__ssid">${r.ssid}</span><span class="network__meta">${chip(r.v)}</span></div>`).join('') : '<p class="caption" style="padding: var(--space-3)">No networks in range.</p>';
+    document.getElementById('map-explain').textContent = explain;
+  }
+  const toSvg = e => { const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY; const p = pt.matrixTransform(svg.getScreenCTM().inverse()); return { x: Math.max(10, Math.min(630, p.x)), y: Math.max(10, Math.min(390, p.y)) }; };
+  [['h-phone', 'phone'], ['h-attacker', 'attacker']].forEach(([id, key]) => {
+    const el = document.getElementById(id);
+    el.addEventListener('pointerdown', e => { el.setPointerCapture(e.pointerId); el.dataset.dragging = 'true'; });
+    el.addEventListener('pointermove', e => { if (el.dataset.dragging === 'true') { pos[key] = toSvg(e); render(); } });
+    el.addEventListener('pointerup', () => { el.dataset.dragging = 'false'; });
+    el.addEventListener('keydown', e => {
+      const step = e.shiftKey ? 40 : 12;
+      const d = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] }[e.key];
+      if (!d) return;
+      e.preventDefault();
+      pos[key] = { x: Math.max(10, Math.min(630, pos[key].x + d[0])), y: Math.max(10, Math.min(390, pos[key].y + d[1])) };
+      render();
+    });
+  });
+  document.getElementById('map-reset').addEventListener('click', () => { Object.assign(pos, structuredClone(start)); render(); });
+
+  syncTheme();
+  render();
+})();
+</script>
+</body>
+</html>

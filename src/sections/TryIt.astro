@@ -1,0 +1,27 @@
+---
+// PLACEHOLDER: the interactive map (brief section 4.4) is the next step.
+import Icon from '../components/Icon.astro';
+---
+<section class="section section--sunken" id="try-it" aria-labelledby="try-title">
+  <div class="container">
+    <header class="section__head">
+      <h2 class="display-2" id="try-title">Location is the anchor.</h2>
+      <p class="lead">
+        Move a phone around a small fictional neighbourhood, drop an attacker anywhere, and watch the verdicts change.
+      </p>
+    </header>
+    <div class="map survey-grid tryit__placeholder">
+      <span class="tryit__icon"><Icon name="map" /></span>
+      <p class="title">Interactive map coming soon</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .tryit__placeholder {
+    display: grid; place-content: center; justify-items: center; gap: var(--space-3);
+    aspect-ratio: 16 / 10;
+    color: var(--color-text-secondary);
+  }
+  .tryit__icon :global(.icon) { width: var(--space-10); height: var(--space-10); }
+</style>

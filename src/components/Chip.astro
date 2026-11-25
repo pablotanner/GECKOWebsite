@@ -1,0 +1,11 @@
+---
+// Verdict chip: always icon + word, never colour alone.
+import Icon from './Icon.astro';
+import { verdicts, type Verdict } from '../lib/icons';
+interface Props { verdict: Verdict; size?: 'md' | 'lg' }
+const { verdict, size = 'md' } = Astro.props;
+const v = verdicts[verdict];
+---
+<span class:list={['chip', `chip--${verdict}`, size === 'lg' && 'chip--lg']}>
+  <Icon name={v.icon} /><span>{v.label}</span>
+</span>

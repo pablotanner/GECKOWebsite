@@ -1,0 +1,70 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import { nav, site } from '../config';
+---
+<header class="nav" id="nav" data-scrolled="false" data-open="false">
+  <nav class="container nav__inner" aria-label="Sections">
+    <Logo />
+    <button class="btn btn--ghost btn--icon nav__toggle" type="button" aria-expanded="false" aria-controls="nav-tabs" id="nav-toggle">
+      <span class="nav__toggle-open"><Icon name="menu" /></span>
+      <span class="nav__toggle-close"><Icon name="close" /></span>
+      <span class="visually-hidden">Menu</span>
+    </button>
+    <ul class="nav__tabs" id="nav-tabs">
+      {nav.map((item) => (
+        <li><a class="nav__tab" href={`#${item.id}`} data-spy={item.id}>{item.label}</a></li>
+      ))}
+      <li>
+        <a class="nav__tab" href={site.githubUrl} target="_blank" rel="noopener noreferrer">
+          GitHub<Icon name="external" size="sm" /><span class="visually-hidden">(opens in a new tab)</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</header>
+
+<style>
+  .nav__toggle-close { display: none; }
+  .nav[data-open='true'] .nav__toggle-open { display: none; }
+  .nav[data-open='true'] .nav__toggle-close { display: contents; }
+  .nav__toggle-open { display: contents; }
+</style>
+
+<script>
+  const nav = document.getElementById('nav')!;
+  const toggle = document.getElementById('nav-toggle')!;
+  const tabs = [...nav.querySelectorAll<HTMLAnchorElement>('[data-spy]')];
+
+  const setOpen = (open: boolean) => {
+    nav.dataset.open = String(open);
+    toggle.setAttribute('aria-expanded', String(open));
+  };
+  toggle.addEventListener('click', () => setOpen(nav.dataset.open !== 'true'));
+  nav.querySelectorAll('.nav__tab').forEach((a) => a.addEventListener('click', () => setOpen(false)));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && nav.dataset.open === 'true') { setOpen(false); toggle.focus(); }
+  });
+
+  // Hairline under the bar once the page has scrolled.
+  const onScroll = () => (nav.dataset.scrolled = String(window.scrollY > 8));
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // Scroll-spy: the section crossing the upper-middle of the viewport is current.
+  const setCurrent = (id: string | null) =>
+    tabs.forEach((t) => (t.dataset.spy === id ? t.setAttribute('aria-current', 'true') : t.removeAttribute('aria-current')));
+  const visible = new Map<string, boolean>();
+  const io = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((e) => visible.set(e.target.id, e.isIntersecting));
+      const current = tabs.map((t) => t.dataset.spy!).find((id) => visible.get(id)) ?? null;
+      setCurrent(current);
+    },
+    { rootMargin: '-40% 0px -55% 0px' },
+  );
+  tabs.forEach((t) => {
+    const section = document.getElementById(t.dataset.spy!);
+    if (section) io.observe(section);
+  });
+</script>

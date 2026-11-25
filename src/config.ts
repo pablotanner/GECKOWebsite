@@ -1,0 +1,78 @@
+// Everything the author still needs to fill in lives here.
+// Paths under `assets/` are relative to public/ and get the deploy base path
+// prepended automatically (see src/lib/url.ts).
+
+export const site = {
+  name: 'GECKOGuard',
+  title: 'GECKOGuard: is this WiFi really who it says it is?',
+  description:
+    'GECKOGuard checks every WiFi network against a public register of who is allowed to run which network, where. An MSc thesis project, ETH Zürich.',
+
+  // TODO(author): fill in.
+  author: 'Author name',
+  thesisTitle: 'Thesis title',
+  githubUrl: 'https://github.com/OWNER/REPO',
+  thesisPdfUrl: '#', // e.g. 'assets/thesis.pdf' or an external URL
+  geopkiUrl: 'https://github.com/netsec-ethz/geopki',
+
+  // Shown in the FAQ ("Is my location sent anywhere?").
+  // TODO(author): confirm. The prototype's default query radius is 50 m.
+  lookupRadiusMeters: 50,
+  lookupAnswerConfirmed: false,
+};
+
+export interface VideoConfig {
+  /** File under public/, e.g. 'assets/video/attack-without.mp4'. Missing file -> placeholder. */
+  src: string;
+  poster: string;
+  captions: string;
+  title: string;
+  /** Caption timeline under the player. TODO(author): match the final recordings. */
+  steps: { time: string; text: string }[];
+}
+
+export const videos = {
+  attackWithout: {
+    src: 'assets/video/attack-without.mp4',
+    poster: 'assets/video/attack-without.jpg',
+    captions: 'assets/video/attack-without.vtt',
+    title: 'Without GECKOGuard',
+    steps: [
+      { time: '0:03', text: 'Phone joins Skyport Free WiFi' },
+      { time: '0:08', text: "The attacker's sign-in page opens" },
+      { time: '0:15', text: 'Email and password are typed in' },
+    ],
+  },
+  attackWith: {
+    src: 'assets/video/attack-with.mp4',
+    poster: 'assets/video/attack-with.jpg',
+    captions: 'assets/video/attack-with.vtt',
+    title: 'With GECKOGuard',
+    steps: [
+      { time: '0:03', text: 'Phone joins the same network' },
+      { time: '0:06', text: 'GECKOGuard looks up what is registered here' },
+      { time: '0:08', text: 'Conflict shown before anything is typed' },
+    ],
+  },
+  eduroam: {
+    src: 'assets/video/eduroam-ios.mp4',
+    poster: 'assets/video/eduroam-ios.jpg',
+    captions: 'assets/video/eduroam-ios.vtt',
+    title: 'The trust prompt on an iPhone',
+    steps: [
+      { time: '0:02', text: 'Phone joins an impostor eduroam' },
+      { time: '0:05', text: '"Trust this certificate?" appears' },
+      { time: '0:08', text: 'One tap, and the password is sent' },
+    ],
+  },
+} satisfies Record<string, VideoConfig>;
+
+export const nav = [
+  { id: 'problem', label: 'Problem' },
+  { id: 'demo', label: 'Demo' },
+  { id: 'how-it-works', label: 'How it works' },
+  { id: 'try-it', label: 'Try it' },
+  { id: 'enterprise', label: 'Enterprise' },
+  { id: 'who', label: "Who it's for" },
+  { id: 'faq', label: 'FAQ' },
+] as const;

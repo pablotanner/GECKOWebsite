@@ -1,0 +1,105 @@
+---
+import Icon from '../components/Icon.astro';
+import Chip from '../components/Chip.astro';
+import type { IconName } from '../lib/icons';
+
+const steps: { title: string; role: string; icon: IconName; text: string }[] = [
+  {
+    title: 'Register',
+    role: 'Operator + Geo CA',
+    icon: 'building',
+    text: 'The airport proves to a Geo CA that it really operates at this address, and registers its network: name, security type, sign-in page domains.',
+  },
+  {
+    title: 'Publish',
+    role: 'GECKO map',
+    icon: 'scroll',
+    text: 'The registration (a GeoCert) goes into a public map. Like Certificate Transparency, entries can’t be quietly added or hidden.',
+  },
+  {
+    title: 'Look up',
+    role: 'Your phone',
+    icon: 'phone',
+    text: 'GECKOGuard asks: “Which networks are registered where I am?” The answer comes with a proof, so it is safe to fetch even over a suspicious network.',
+  },
+  {
+    title: 'Compare',
+    role: 'GECKOGuard',
+    icon: 'scale',
+    text: 'What the phone actually sees is compared with what’s registered.',
+  },
+];
+
+const fails = [
+  { text: 'Can’t get a GeoCert for a place it doesn’t operate.', outcome: 'Stopped' },
+  { text: 'Can’t hide the real registration from the map.', outcome: 'Stopped' },
+  { text: 'Can’t forge the answer. The proof wouldn’t check out.', outcome: 'Stopped' },
+  { text: 'Its network doesn’t match, so it’s flagged.', outcome: 'Flagged' },
+];
+---
+<section class="section" id="how-it-works" aria-labelledby="how-title">
+  <div class="container">
+    <header class="section__head">
+      <h2 class="display-2" id="how-title">A name can be copied. A registration for this place can't.</h2>
+      <p class="lead">Four roles, one question: is this network registered to be here?</p>
+    </header>
+
+    <ol class="flow">
+      {steps.map((s, i) => (
+        <li class="flow__step reveal" style={`--reveal-index: ${i}`}>
+          <span class="flow__node"><Icon name={s.icon} /></span>
+          <span class="flow__num">{s.role}</span>
+          <h3 class="flow__title">{s.title}</h3>
+          <div class="flow__text">
+            <p>{s.text}</p>
+            {i === 3 && (
+              <p class="how__verdicts">
+                <Chip verdict="verified" /> <Chip verdict="conflict" /> <Chip verdict="unverified" />
+              </p>
+            )}
+          </div>
+        </li>
+      ))}
+    </ol>
+
+    <div class="how__attack">
+      <h3 class="title-lg">Where the attacker fails</h3>
+      <ol class="flow flow--attack" aria-label="The attacker at each step">
+        {fails.map((f, i) => (
+          <li class="flow__step reveal" style={`--reveal-index: ${i}`}>
+            <span class="flow__node"><Icon name="laptop" /><span class="visually-hidden">Attacker</span></span>
+            <span class="flow__num">{steps[i].title}</span>
+            <span class="flow__stop"><Icon name={f.outcome === 'Flagged' ? 'alert' : 'ban'} size="sm" />{f.outcome}</span>
+            <p class="flow__text">{f.text}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+
+    <p class="how__ct">
+      If you know <a href="https://certificate.transparency.dev/" target="_blank" rel="noopener noreferrer">Certificate Transparency<span class="visually-hidden"> (opens in a new tab)</span></a>:
+      GECKO does for WiFi at a place what CT does for a domain's certificates.
+    </p>
+  </div>
+</section>
+
+<style>
+  .how__verdicts { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-3); }
+  .how__attack {
+    display: grid; gap: var(--space-8);
+    margin-top: var(--space-16);
+    padding: var(--space-8) var(--space-5);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface-sunken);
+  }
+  .how__ct {
+    margin-top: var(--space-12);
+    max-width: var(--measure-lead);
+    font-size: var(--text-lead);
+    line-height: var(--leading-snug);
+    color: var(--color-text-secondary);
+  }
+  @media (min-width: 48em) {
+    .how__attack { padding: var(--space-10) var(--space-8); }
+  }
+</style>

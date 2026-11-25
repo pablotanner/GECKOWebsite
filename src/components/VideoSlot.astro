@@ -1,0 +1,57 @@
+---
+// A video with captions, or a styled placeholder while the file is missing.
+// The check runs at build time against public/, so adding the .mp4 and
+// redeploying is all it takes to switch from placeholder to player.
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+import Icon from './Icon.astro';
+import Chip from './Chip.astro';
+import type { VideoConfig } from '../config';
+import type { Verdict } from '../lib/icons';
+import { url } from '../lib/url';
+
+interface Props { video: VideoConfig; verdict?: Verdict; id: string }
+const { video, verdict, id } = Astro.props;
+
+const inPublic = (p: string) => existsSync(join(process.cwd(), 'public', p));
+const hasVideo = inPublic(video.src);
+const hasPoster = inPublic(video.poster);
+const hasCaptions = inPublic(video.captions);
+const file = video.src.split('/').pop();
+---
+<figure class="video" aria-labelledby={`${id}-title`}>
+  <div class="video__tag">
+    <p class="title" id={`${id}-title`}>{video.title}</p>
+    {verdict && <Chip verdict={verdict} />}
+  </div>
+
+  <div class:list={['video__frame', !hasVideo && 'survey-grid']}>
+    {hasVideo ? (
+      <video
+        controls
+        muted
+        playsinline
+        preload="none"
+        data-autoplay-on-view
+        poster={hasPoster ? url(video.poster) : undefined}
+        aria-describedby={`${id}-steps`}
+      >
+        <source src={url(video.src)} type="video/mp4" />
+        {hasCaptions && <track kind="captions" src={url(video.captions)} srclang="en" label="English" default />}
+        Your browser can't play this video. <a href={url(video.src)}>Download it</a> instead.
+      </video>
+    ) : (
+      <div class="video__placeholder">
+        <span class="video__play"><Icon name="play" /></span>
+        <p class="title">Video coming soon</p>
+        <p class="caption mono">{file}</p>
+      </div>
+    )}
+  </div>
+
+  <ol class="timeline" id={`${id}-steps`} aria-label={`${video.title}: what happens`}>
+    {video.steps.map((s) => (
+      <li><time>{s.time}</time>{s.text}</li>
+    ))}
+  </ol>
+</figure>

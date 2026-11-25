@@ -1,0 +1,77 @@
+---
+import Icon from '../components/Icon.astro';
+import { site } from '../config';
+
+const faqs: { q: string; a: string; tbc?: boolean }[] = [
+  {
+    q: 'Does it work everywhere?',
+    a: 'Only where networks are registered. Elsewhere you get <strong>Unverified</strong>, which is no worse than today.',
+  },
+  {
+    q: 'What if the attacker blocks the lookup?',
+    a: 'Then the network can’t be verified, so it never shows <strong>Verified</strong>.',
+  },
+  {
+    q: 'What if the attacker is a legitimately registered operator?',
+    a: 'GECKO checks who is allowed to run a network at a place, not whether they behave well. A registered operator who misbehaves is out of scope.',
+  },
+  {
+    q: 'Does it need root?',
+    a: 'The current prototype runs with system-level privileges, because it assumes the check would be built into the phone’s WiFi manager.',
+  },
+  {
+    q: 'Is it available?',
+    a: 'It’s a research prototype, not a store app.',
+  },
+  {
+    q: 'Is my location sent anywhere?',
+    a: `To look up what is registered nearby, GECKOGuard sends the GECKO map server the map cells covering an area around the device (about ${site.lookupRadiusMeters} m in the prototype) and an altitude range. The server learns roughly which area you are in, not an exact point. Nothing else is sent, and no other server is contacted for the lookup.`,
+    tbc: !site.lookupAnswerConfirmed,
+  },
+];
+---
+<section class="section" id="faq" aria-labelledby="faq-title">
+  <div class="container faq__grid">
+    <header class="faq__head">
+      <h2 class="display-2" id="faq-title">Questions, and honest limits</h2>
+      <p class="lead">What GECKOGuard does not do matters as much as what it does.</p>
+    </header>
+    <div class="accordion">
+      {faqs.map((f, i) => (
+        <div class="accordion__item">
+          <h3>
+            <button class="accordion__trigger" type="button" aria-expanded="false" aria-controls={`faq-${i}`} id={`faq-${i}-t`}>
+              {f.q}
+              <Icon name="chevron" />
+            </button>
+          </h3>
+          <div class="accordion__panel" id={`faq-${i}`} role="region" aria-labelledby={`faq-${i}-t`} hidden>
+            <p set:html={f.a} />
+            {f.tbc && <p class="caption faq__tbc">To be confirmed by the author.</p>}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('#faq .accordion__trigger').forEach((t) => {
+    t.addEventListener('click', () => {
+      const open = t.getAttribute('aria-expanded') !== 'true';
+      t.setAttribute('aria-expanded', String(open));
+      const panel = document.getElementById(t.getAttribute('aria-controls')!);
+      if (panel) panel.hidden = !open;
+    });
+  });
+</script>
+
+<style>
+  .faq__grid { display: grid; gap: var(--space-10); }
+  .faq__head { display: grid; gap: var(--space-4); align-content: start; }
+  .faq__tbc { margin-top: var(--space-3); }
+  @media (min-width: 56em) {
+    .faq__grid { grid-template-columns: 5fr 7fr; gap: var(--space-16); }
+    .faq__head { position: sticky; top: calc(var(--layout-nav-height) + var(--space-8)); }
+  }
+</style>

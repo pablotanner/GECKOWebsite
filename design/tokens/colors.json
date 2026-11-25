@@ -1,0 +1,240 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "$description": "GECKOGuard colour tokens. Three tiers: primitive (palette, never used directly) -> semantic (by intent, swapped for dark mode) -> component (scoped, always reference semantic). Built into src/styles/tokens.css by scripts/build-tokens.mjs.",
+
+  "primitive": {
+    "$description": "Raw palette. Paper = warm surfaces, ink = cool text greys, cobalt = the single brand accent, green/red = verdicts only.",
+    "paper": {
+      "0":   { "$type": "color", "$value": "#FDFDFB", "$description": "Card (from the thesis deck)" },
+      "50":  { "$type": "color", "$value": "#F7F8F4", "$description": "Page" },
+      "100": { "$type": "color", "$value": "#EEF0EB", "$description": "Soft background (thesis deck)" },
+      "125": { "$type": "color", "$value": "#E8EBE6" },
+      "150": { "$type": "color", "$value": "#E6E8E3", "$description": "Unverified chip background (thesis deck)" },
+      "175": { "$type": "color", "$value": "#E2E5DE" },
+      "200": { "$type": "color", "$value": "#D9DCD5", "$description": "Lines (thesis deck)" },
+      "250": { "$type": "color", "$value": "#C9CDC5" },
+      "300": { "$type": "color", "$value": "#C4C9C0" },
+      "a90": { "$type": "color", "$value": "#F7F8F4E6", "$description": "Page at 90% for the sticky nav" }
+    },
+    "ink": {
+      "200": { "$type": "color", "$value": "#C3C9CF" },
+      "300": { "$type": "color", "$value": "#AEB6C0" },
+      "350": { "$type": "color", "$value": "#8E97A3" },
+      "380": { "$type": "color", "$value": "#8A93A0" },
+      "400": { "$type": "color", "$value": "#7D8794" },
+      "450": { "$type": "color", "$value": "#6B7684" },
+      "480": { "$type": "color", "$value": "#5D6672" },
+      "500": { "$type": "color", "$value": "#5F6B7A", "$description": "Labels (thesis deck)" },
+      "600": { "$type": "color", "$value": "#47505E", "$description": "Muted text (thesis deck)" },
+      "650": { "$type": "color", "$value": "#3A424D" },
+      "680": { "$type": "color", "$value": "#36404C" },
+      "700": { "$type": "color", "$value": "#2C3747" },
+      "720": { "$type": "color", "$value": "#2A323D" },
+      "740": { "$type": "color", "$value": "#252B33" },
+      "760": { "$type": "color", "$value": "#222A35" },
+      "780": { "$type": "color", "$value": "#20272F" },
+      "790": { "$type": "color", "$value": "#1F2731" },
+      "800": { "$type": "color", "$value": "#1B2430", "$description": "Ink (thesis deck)" },
+      "820": { "$type": "color", "$value": "#1B222C" },
+      "840": { "$type": "color", "$value": "#1A212B" },
+      "860": { "$type": "color", "$value": "#171D26" },
+      "880": { "$type": "color", "$value": "#141A22" },
+      "900": { "$type": "color", "$value": "#11161D" },
+      "930": { "$type": "color", "$value": "#0F151D" },
+      "950": { "$type": "color", "$value": "#0C1015" },
+      "990": { "$type": "color", "$value": "#05080C" },
+      "a90": { "$type": "color", "$value": "#11161DE6", "$description": "Dark page at 90% for the sticky nav" }
+    },
+    "cobalt": {
+      "50":  { "$type": "color", "$value": "#E8EBFB" },
+      "200": { "$type": "color", "$value": "#B7C1FF" },
+      "300": { "$type": "color", "$value": "#9AA8FF" },
+      "600": { "$type": "color", "$value": "#3346C8" },
+      "700": { "$type": "color", "$value": "#2837A6" },
+      "900": { "$type": "color", "$value": "#1C2245" },
+      "a10": { "$type": "color", "$value": "#3346C814" },
+      "a25": { "$type": "color", "$value": "#3346C840" },
+      "a10-dark": { "$type": "color", "$value": "#9AA8FF1A" },
+      "a25-dark": { "$type": "color", "$value": "#9AA8FF40" }
+    },
+    "green": {
+      "50":  { "$type": "color", "$value": "#E4F2EA", "$description": "Verified background (thesis deck)" },
+      "200": { "$type": "color", "$value": "#A9D5BC" },
+      "300": { "$type": "color", "$value": "#7FD6A2" },
+      "700": { "$type": "color", "$value": "#1E7A4C", "$description": "Verified (thesis deck)" },
+      "800": { "$type": "color", "$value": "#24573A" },
+      "950": { "$type": "color", "$value": "#12301F" }
+    },
+    "red": {
+      "50":  { "$type": "color", "$value": "#FBE9E7", "$description": "Conflict background (thesis deck)" },
+      "200": { "$type": "color", "$value": "#EDB4AE" },
+      "300": { "$type": "color", "$value": "#FF9C92" },
+      "700": { "$type": "color", "$value": "#B3261E", "$description": "Conflict (thesis deck)" },
+      "800": { "$type": "color", "$value": "#6A2620" },
+      "950": { "$type": "color", "$value": "#3A1512" }
+    }
+  },
+
+  "semantic": {
+    "$description": "Use these (as CSS variables --color-*) in designs and page styles. Dark values live in the `dark` map below.",
+    "surface": {
+      "page":    { "$type": "color", "$value": "{primitive.paper.50}" },
+      "card":    { "$type": "color", "$value": "{primitive.paper.0}" },
+      "raised":  { "$type": "color", "$value": "{primitive.paper.0}" },
+      "sunken":  { "$type": "color", "$value": "{primitive.paper.100}" },
+      "overlay": { "$type": "color", "$value": "{primitive.paper.a90}", "$description": "Translucent page for the sticky nav" },
+      "inverse": { "$type": "color", "$value": "{primitive.ink.800}" },
+      "device":  { "$type": "color", "$value": "{primitive.ink.800}", "$description": "Phone bezel. Stays dark in both themes." }
+    },
+    "text": {
+      "primary":   { "$type": "color", "$value": "{primitive.ink.800}" },
+      "secondary": { "$type": "color", "$value": "{primitive.ink.600}" },
+      "tertiary":  { "$type": "color", "$value": "{primitive.ink.500}" },
+      "link":      { "$type": "color", "$value": "{primitive.cobalt.600}" },
+      "on-action": { "$type": "color", "$value": "{primitive.paper.0}" },
+      "inverse":   { "$type": "color", "$value": "{primitive.paper.0}" },
+      "disabled":  { "$type": "color", "$value": "{primitive.ink.380}" }
+    },
+    "action": {
+      "primary":        { "$type": "color", "$value": "{primitive.ink.800}", "$description": "The one affirmative action per view. Ink, not accent, so verdict colours stay the loudest thing on screen." },
+      "primary-hover":  { "$type": "color", "$value": "{primitive.ink.700}" },
+      "primary-active": { "$type": "color", "$value": "{primitive.ink.930}" },
+      "secondary-hover":  { "$type": "color", "$value": "{primitive.paper.100}" },
+      "secondary-active": { "$type": "color", "$value": "{primitive.paper.150}" },
+      "disabled":       { "$type": "color", "$value": "{primitive.paper.150}" }
+    },
+    "border": {
+      "subtle":  { "$type": "color", "$value": "{primitive.paper.150}" },
+      "default": { "$type": "color", "$value": "{primitive.paper.200}", "$description": "Decorative only: card edges, dividers." },
+      "strong":  { "$type": "color", "$value": "{primitive.ink.400}", "$description": "Any boundary that identifies a control (WCAG 1.4.11)." }
+    },
+    "accent": {
+      "default":   { "$type": "color", "$value": "{primitive.cobalt.600}", "$description": "The single brand accent: links, focus, the reader's phone, registered areas, selection." },
+      "hover":     { "$type": "color", "$value": "{primitive.cobalt.700}" },
+      "subtle":    { "$type": "color", "$value": "{primitive.cobalt.50}" },
+      "on-accent": { "$type": "color", "$value": "{primitive.paper.0}" }
+    },
+    "focus": {
+      "ring": { "$type": "color", "$value": "{primitive.cobalt.600}" }
+    },
+    "verdict": {
+      "verified-fg":     { "$type": "color", "$value": "{primitive.green.700}" },
+      "verified-bg":     { "$type": "color", "$value": "{primitive.green.50}" },
+      "verified-border": { "$type": "color", "$value": "{primitive.green.200}" },
+      "conflict-fg":     { "$type": "color", "$value": "{primitive.red.700}" },
+      "conflict-bg":     { "$type": "color", "$value": "{primitive.red.50}" },
+      "conflict-border": { "$type": "color", "$value": "{primitive.red.200}" },
+      "unverified-fg":     { "$type": "color", "$value": "{primitive.ink.600}" },
+      "unverified-bg":     { "$type": "color", "$value": "{primitive.paper.150}" },
+      "unverified-border": { "$type": "color", "$value": "{primitive.paper.250}" }
+    },
+    "map": {
+      "ground":          { "$type": "color", "$value": "{primitive.paper.100}" },
+      "building":        { "$type": "color", "$value": "{primitive.paper.175}" },
+      "building-stroke": { "$type": "color", "$value": "{primitive.paper.300}" },
+      "road":            { "$type": "color", "$value": "{primitive.paper.0}" },
+      "area-stroke":     { "$type": "color", "$value": "{primitive.cobalt.600}" },
+      "area-fill":       { "$type": "color", "$value": "{primitive.cobalt.a10}" },
+      "area-hatch":      { "$type": "color", "$value": "{primitive.cobalt.a25}" },
+      "attacker":        { "$type": "color", "$value": "{primitive.red.700}" }
+    },
+    "shadow": {
+      "color": { "$type": "color", "$value": "{primitive.ink.800}" }
+    }
+  },
+
+  "component": {
+    "$description": "Scoped tokens. Always reference semantic, so they follow dark mode automatically.",
+    "button": {
+      "primary-bg":        { "$type": "color", "$value": "{semantic.action.primary}" },
+      "primary-bg-hover":  { "$type": "color", "$value": "{semantic.action.primary-hover}" },
+      "primary-bg-active": { "$type": "color", "$value": "{semantic.action.primary-active}" },
+      "primary-text":      { "$type": "color", "$value": "{semantic.text.on-action}" },
+      "secondary-border":  { "$type": "color", "$value": "{semantic.border.strong}" },
+      "secondary-text":    { "$type": "color", "$value": "{semantic.text.primary}" },
+      "secondary-bg-hover":  { "$type": "color", "$value": "{semantic.action.secondary-hover}" },
+      "secondary-bg-active": { "$type": "color", "$value": "{semantic.action.secondary-active}" },
+      "disabled-bg":       { "$type": "color", "$value": "{semantic.action.disabled}" },
+      "disabled-text":     { "$type": "color", "$value": "{semantic.text.disabled}" }
+    },
+    "nav": {
+      "tab-text":        { "$type": "color", "$value": "{semantic.text.secondary}" },
+      "tab-text-active": { "$type": "color", "$value": "{semantic.text.primary}" },
+      "tab-bg-hover":    { "$type": "color", "$value": "{semantic.action.secondary-hover}" },
+      "tab-bg-active":   { "$type": "color", "$value": "{semantic.surface.sunken}" }
+    },
+    "geocert": {
+      "bg":     { "$type": "color", "$value": "{semantic.surface.card}" },
+      "rule":   { "$type": "color", "$value": "{semantic.border.default}" },
+      "seal":   { "$type": "color", "$value": "{semantic.accent.default}" }
+    }
+  },
+
+  "dark": {
+    "$description": "Dark-mode overrides at the semantic tier (keys are semantic paths without the `semantic.` prefix). Primitives never change.",
+    "surface": {
+      "page":    { "$value": "{primitive.ink.900}" },
+      "card":    { "$value": "{primitive.ink.860}" },
+      "raised":  { "$value": "{primitive.ink.840}" },
+      "sunken":  { "$value": "{primitive.ink.950}" },
+      "overlay": { "$value": "{primitive.ink.a90}" },
+      "inverse": { "$value": "{primitive.paper.125}" },
+      "device":  { "$value": "{primitive.ink.680}" }
+    },
+    "text": {
+      "primary":   { "$value": "{primitive.paper.125}" },
+      "secondary": { "$value": "{primitive.ink.300}" },
+      "tertiary":  { "$value": "{primitive.ink.350}" },
+      "link":      { "$value": "{primitive.cobalt.300}" },
+      "on-action": { "$value": "{primitive.ink.900}" },
+      "inverse":   { "$value": "{primitive.ink.900}" },
+      "disabled":  { "$value": "{primitive.ink.480}" }
+    },
+    "action": {
+      "primary":        { "$value": "{primitive.paper.125}" },
+      "primary-hover":  { "$value": "{primitive.paper.0}" },
+      "primary-active": { "$value": "{primitive.paper.250}" },
+      "secondary-hover":  { "$value": "{primitive.ink.790}" },
+      "secondary-active": { "$value": "{primitive.ink.740}" },
+      "disabled":       { "$value": "{primitive.ink.740}" }
+    },
+    "border": {
+      "subtle":  { "$value": "{primitive.ink.780}" },
+      "default": { "$value": "{primitive.ink.720}" },
+      "strong":  { "$value": "{primitive.ink.450}" }
+    },
+    "accent": {
+      "default":   { "$value": "{primitive.cobalt.300}" },
+      "hover":     { "$value": "{primitive.cobalt.200}" },
+      "subtle":    { "$value": "{primitive.cobalt.900}" },
+      "on-accent": { "$value": "{primitive.ink.900}" }
+    },
+    "focus": {
+      "ring": { "$value": "{primitive.cobalt.300}" }
+    },
+    "verdict": {
+      "verified-fg":     { "$value": "{primitive.green.300}" },
+      "verified-bg":     { "$value": "{primitive.green.950}" },
+      "verified-border": { "$value": "{primitive.green.800}" },
+      "conflict-fg":     { "$value": "{primitive.red.300}" },
+      "conflict-bg":     { "$value": "{primitive.red.950}" },
+      "conflict-border": { "$value": "{primitive.red.800}" },
+      "unverified-fg":     { "$value": "{primitive.ink.200}" },
+      "unverified-bg":     { "$value": "{primitive.ink.740}" },
+      "unverified-border": { "$value": "{primitive.ink.650}" }
+    },
+    "map": {
+      "ground":          { "$value": "{primitive.ink.880}" },
+      "building":        { "$value": "{primitive.ink.760}" },
+      "building-stroke": { "$value": "{primitive.ink.680}" },
+      "road":            { "$value": "{primitive.ink.820}" },
+      "area-stroke":     { "$value": "{primitive.cobalt.300}" },
+      "area-fill":       { "$value": "{primitive.cobalt.a10-dark}" },
+      "area-hatch":      { "$value": "{primitive.cobalt.a25-dark}" },
+      "attacker":        { "$value": "{primitive.red.300}" }
+    },
+    "shadow": {
+      "color": { "$value": "{primitive.ink.990}" }
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "$description": "Motion is feedback, not decoration. One signature move: the 'checking' scan on a verdict chip. Under prefers-reduced-motion every duration collapses to near zero and reveals become plain fades-in-place (see kit.css).",
+  "duration": {
+    "instant": { "$type": "duration", "$value": "80ms" },
+    "fast":    { "$type": "duration", "$value": "140ms" },
+    "base":    { "$type": "duration", "$value": "220ms" },
+    "slow":    { "$type": "duration", "$value": "420ms" },
+    "reveal":  { "$type": "duration", "$value": "640ms" },
+    "scan":    { "$type": "duration", "$value": "1400ms" }
+  },
+  "ease": {
+    "standard": { "$type": "cubicBezier", "$value": "cubic-bezier(0.2, 0, 0, 1)" },
+    "out":      { "$type": "cubicBezier", "$value": "cubic-bezier(0.16, 1, 0.3, 1)" },
+    "in-out":   { "$type": "cubicBezier", "$value": "cubic-bezier(0.65, 0, 0.35, 1)" }
+  },
+  "distance": {
+    "reveal": { "$type": "dimension", "$value": "1rem" }
+  },
+  "stagger": {
+    "step": { "$type": "duration", "$value": "90ms", "$description": "Delay between flow steps revealing" }
+  }
+}

@@ -1,0 +1,22 @@
+---
+import Logo from './Logo.astro';
+import { site } from '../config';
+import { url } from '../lib/url';
+---
+<footer class="footer">
+  <div class="container footer__grid">
+    <div class="stack">
+      <Logo />
+      <p class="title">{site.thesisTitle}</p>
+      <p class="caption">MSc thesis, ETH Zürich, Network Security Group. {site.author}.</p>
+    </div>
+    <ul class="footer__links" aria-label="Project">
+      <li><a href={site.githubUrl} target="_blank" rel="noopener noreferrer">Source on GitHub<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+      <li><a href={url(site.thesisPdfUrl)}>Thesis (PDF)</a></li>
+    </ul>
+    <div class="stack">
+      <p class="caption">Based on <a href={site.geopkiUrl} target="_blank" rel="noopener noreferrer">GeoPKI</a>.</p>
+      <p class="caption">A research prototype. No tracking, no cookies.</p>
+    </div>
+  </div>
+</footer>

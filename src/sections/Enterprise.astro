@@ -1,0 +1,53 @@
+---
+import Icon from '../components/Icon.astro';
+import VideoSlot from '../components/VideoSlot.astro';
+import { videos } from '../config';
+import type { IconName } from '../lib/icons';
+
+const helps: { icon: IconName; text: string }[] = [
+  { icon: 'server', text: 'It finds out which login server the network is registered to use, over a public, password-free onboarding login.' },
+  { icon: 'key', text: 'It sends your password only to that server, checked automatically.' },
+  { icon: 'ban', text: 'There is no “Trust” button to tap by mistake.' },
+];
+---
+<section class="section enterprise" id="enterprise" aria-labelledby="enterprise-title">
+  <div class="container enterprise__grid">
+    <div class="enterprise__copy">
+      <h2 class="display-2" id="enterprise-title">It's worse for enterprise WiFi.</h2>
+      <p class="lead">
+        On eduroam and company networks, your phone sends your password to whichever server answers.
+        An impostor answers with its own certificate, and the phone shows a <q>Trust this certificate?</q> prompt. One tap, and the password is gone.
+      </p>
+      <div class="enterprise__helps">
+        <p class="label">How GECKOGuard helps</p>
+        <ul class="enterprise__list">
+          {helps.map((h) => (
+            <li><Icon name={h.icon} /><span>{h.text}</span></li>
+          ))}
+        </ul>
+      </div>
+    </div>
+    <div class="enterprise__media">
+      <VideoSlot id="video-eduroam" video={videos.eduroam} />
+    </div>
+  </div>
+</section>
+
+<style>
+  .enterprise__grid { display: grid; gap: var(--space-12); }
+  .enterprise__copy { display: grid; gap: var(--space-8); align-content: start; }
+  .enterprise__helps { display: grid; gap: var(--space-4); }
+  .enterprise__list { list-style: none; display: grid; }
+  .enterprise__list li {
+    display: grid; grid-template-columns: auto 1fr; gap: var(--space-4); align-items: start;
+    padding-block: var(--space-4);
+    border-top: var(--border-hairline) solid var(--color-border-default);
+    max-width: var(--measure-lead);
+  }
+  .enterprise__list :global(.icon) { color: var(--color-accent-default); margin-top: var(--space-1); }
+  .enterprise__media { width: 100%; max-width: 20rem; justify-self: center; }
+  @media (min-width: 56em) {
+    .enterprise__grid { grid-template-columns: 7fr 4fr; gap: var(--space-16); align-items: start; }
+    .enterprise__media { justify-self: end; }
+  }
+</style>

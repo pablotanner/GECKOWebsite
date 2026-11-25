@@ -1,0 +1,32 @@
+---
+import VideoSlot from '../components/VideoSlot.astro';
+import { videos } from '../config';
+---
+<section class="section section--sunken" id="demo" aria-labelledby="demo-title">
+  <div class="container">
+    <header class="section__head demo__head">
+      <h2 class="display-2" id="demo-title">The same attack, twice.</h2>
+      <p class="lead">
+        Recorded in a lab with two routers and an Android tablet. On the left the phone has no protection.
+        On the right it runs GECKOGuard. The attacker does exactly the same thing both times.
+      </p>
+    </header>
+    <div class="demo__pair">
+      <VideoSlot id="video-without" video={videos.attackWithout} />
+      <VideoSlot id="video-with" video={videos.attackWith} verdict="conflict" />
+    </div>
+  </div>
+</section>
+
+<script>
+  import '../scripts/autoplay';
+</script>
+
+<style>
+  .demo__pair { display: grid; gap: var(--space-12); }
+  @media (min-width: 48em) {
+    .demo__head { grid-template-columns: 1fr 1fr; align-items: end; gap: var(--space-12); }
+    .demo__pair { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-10); }
+    .demo__pair :global(.video) { width: min(100%, 22rem); }
+  }
+</style>

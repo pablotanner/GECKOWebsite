@@ -1,27 +1,74 @@
 ---
-// PLACEHOLDER: the interactive map (brief section 4.4) is the next step.
-import Icon from '../components/Icon.astro';
+import TryItMap from '../components/TryItMap';
 ---
 <section class="section section--sunken" id="try-it" aria-labelledby="try-title">
   <div class="container">
-    <header class="section__head">
-      <h2 class="display-2" id="try-title">Location is the anchor.</h2>
+    <header class="section__head tryit__head">
+      <h2 class="display-2" id="try-title">Location is the trusted anchor.</h2>
       <p class="lead">
-        Move a phone around a small fictional neighbourhood, drop an attacker anywhere, and watch the verdicts change.
+        Drag your phone around this neighbourhood. Then drop an attacker anywhere, let it copy a
+        network's name and watch what your phone shows.
       </p>
     </header>
-    <div class="map survey-grid tryit__placeholder">
-      <span class="tryit__icon"><Icon name="map" /></span>
-      <p class="title">Interactive map coming soon</p>
-    </div>
+
+    <TryItMap client:visible />
   </div>
 </section>
 
-<style>
-  .tryit__placeholder {
-    display: grid; place-content: center; justify-items: center; gap: var(--space-3);
-    aspect-ratio: 16 / 10;
-    color: var(--color-text-secondary);
+<style is:global>
+  .tryit { display: grid; gap: var(--space-8); }
+  .tryit__stage { display: grid; gap: var(--space-4); align-content: start; min-width: 0; }
+  .tryit__map { position: relative; background: var(--color-map-ground); }
+  .tryit__map[data-placing='true'] svg { cursor: crosshair; }
+  .tryit__hint {
+    position: absolute; inset-inline: var(--space-3); bottom: var(--space-3);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-inverse); color: var(--color-text-inverse);
+    font-size: var(--text-sm); text-align: center;
+    pointer-events: none;
   }
-  .tryit__icon :global(.icon) { width: var(--space-10); height: var(--space-10); }
+  .tryit__legend { list-style: none; display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-6); font-size: var(--text-sm); color: var(--color-text-secondary); }
+  .tryit__legend li { display: inline-flex; align-items: center; gap: var(--space-2); }
+  .tryit__swatch {
+    display: inline-grid; place-items: center;
+    width: var(--space-5); height: var(--space-5);
+    border-radius: 50%;
+    border: var(--border-thick) solid var(--color-text-primary);
+    background: var(--color-surface-card);
+  }
+  .tryit__swatch .icon { width: var(--space-3); height: var(--space-3); }
+  .tryit__swatch--area { border-radius: var(--radius-xs); border: var(--border-thick) dashed var(--color-map-area-stroke); background-color: var(--color-map-area-fill); }
+  .tryit__swatch--attacker { border-style: dashed; border-color: var(--color-map-attacker); color: var(--color-map-attacker); }
+  .tryit__swatch--range { border: var(--border-thick) dotted var(--color-accent-default); background: none; }
+
+  .tryit__panel { display: grid; gap: var(--space-5); align-content: start; }
+  .tryit__phone {
+    display: grid; gap: var(--space-3);
+    padding: var(--space-4) var(--space-3) var(--space-3);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface-page);
+    border: var(--border-frame) solid var(--color-surface-device);
+  }
+  .tryit__phone-head { display: grid; gap: var(--space-1); padding-inline: var(--space-2); }
+  .tryit__phone-head .caption { display: flex; align-items: center; gap: var(--space-1); }
+  .tryit__list { list-style: none; display: grid; gap: var(--space-2); min-height: calc(3 * var(--space-16)); align-content: start; }
+  .tryit__empty { padding: var(--space-3); }
+  .tryit__explain { font-size: var(--text-base); line-height: var(--leading-snug); min-height: calc(4 * var(--leading-snug) * var(--text-base)); }
+  .tryit__controls { display: grid; gap: var(--space-4); justify-items: stretch; }
+  .tryit__reset { justify-self: start; }
+  .tryit__footnote { max-width: var(--measure-prose); }
+
+  @media (min-width: 64em) {
+    .tryit {
+      grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+      grid-template-areas: 'stage panel' 'note panel';
+      grid-template-rows: auto 1fr;
+      gap: var(--space-6) var(--space-10);
+      align-items: start;
+    }
+    .tryit__stage { grid-area: stage; }
+    .tryit__panel { grid-area: panel; }
+    .tryit__footnote { grid-area: note; }
+  }
 </style>

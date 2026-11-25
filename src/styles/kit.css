@@ -652,7 +652,7 @@ a:hover { color: var(--color-accent-hover); text-decoration-thickness: var(--bor
 
 /* ========================================================== map (SVG) */
 
-.map { border-radius: var(--radius-xl); border: var(--border-hairline) solid var(--color-border-default); overflow: hidden; background: var(--color-map-ground); touch-action: none; }
+.map { border-radius: var(--radius-xl); border: var(--border-hairline) solid var(--color-border-default); overflow: hidden; background: var(--color-map-ground); }
 .map > svg { width: 100%; height: auto; }
 .map-ground { fill: var(--color-map-ground); }
 .map-road { fill: none; stroke: var(--color-map-road); stroke-linecap: round; }
@@ -662,14 +662,15 @@ a:hover { color: var(--color-accent-hover); text-decoration-thickness: var(--bor
 .map-label { font-family: var(--font-sans); font-size: 13px; font-weight: var(--font-weight-semibold); fill: var(--color-text-primary); } /* ds-allow-hardcode: SVG user units */
 .map-label--ssid { font-family: var(--font-mono); font-weight: var(--font-weight-regular); fill: var(--color-text-secondary); font-size: 11px; } /* ds-allow-hardcode: SVG user units */
 .map-radius { fill: color-mix(in srgb, var(--color-accent-default) 6%, transparent); stroke: var(--color-accent-default); stroke-width: 1.5; stroke-dasharray: 3 4; }
-.map-phone { cursor: grab; }
 .map-phone__body { fill: var(--color-accent-default); }
 .map-phone__screen { fill: var(--color-accent-on-accent); }
 .map-ap__mast { fill: var(--color-surface-card); stroke: var(--color-text-primary); stroke-width: 1.5; }
 .map-ap--attacker .map-ap__mast { stroke: var(--color-map-attacker); stroke-dasharray: 3 2; }
 .map-ap--attacker .map-ap__glyph { stroke: var(--color-map-attacker); }
 .map-ap__glyph { fill: none; stroke: var(--color-text-primary); stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
-.map-handle { outline: none; }
+/* Only the markers block touch scrolling, so the page still scrolls over the map. */
+.map-handle { outline: none; cursor: grab; touch-action: none; }
+.map-hit { fill: transparent; }
 .map-handle:focus-visible .map-focus { stroke: var(--color-focus-ring); stroke-width: 2.5; opacity: 1; }
 .map-focus { fill: none; opacity: 0; }
 .map-handle[data-dragging="true"] { cursor: grabbing; }

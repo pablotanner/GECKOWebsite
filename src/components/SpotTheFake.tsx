@@ -8,16 +8,16 @@ const portals = [
   {
     id: 'a',
     real: false,
-    domain: 'login.skyport-wlfi.example',
+    domain: 'login.wipkingen-airport.com',
     verdict: 'conflict' as const,
-    note: 'Not the sign-in page registered for this terminal.',
+    note: 'Not the sign-in page registered for this location.',
   },
   {
     id: 'b',
     real: true,
-    domain: 'login.skyport-wifi.example',
+    domain: 'login.airport-wipkingen.com',
     verdict: 'verified' as const,
-    note: 'Registered for this terminal.',
+    note: 'Registered for this location.',
   },
 ];
 
@@ -44,9 +44,9 @@ export default function SpotTheFake() {
             <div className="portal__body">
               <p className="portal__brand">
                 <Icon name="plane" />
-                Skyport
+                Airport Wipkingen
               </p>
-              <p className="title">Welcome to Skyport Free WiFi</p>
+              <p className="title">Welcome to Airport Wipkingen</p>
               <div className="portal__field" aria-hidden="true">
                 Email
                 <span className="portal__input">you@example.com</span>
@@ -74,12 +74,11 @@ export default function SpotTheFake() {
         {picked !== null && (
           <>
             <p className="title-lg">
-              {pickedReal ? 'Right. Did you spot why, or was it a guess?' : "That one is the attacker's."}
+              {pickedReal ? 'That one is the real one.' : "That one is the attacker's."}
             </p>
             <p className="lead">
-              {pickedReal ? 'Most people can’t tell' : 'You couldn’t tell'}, and neither can your phone. They look the same because copying a page is
-              trivial. The difference is one letter in a domain you would never read: <span className="mono">wlfi</span> instead
-              of <span className="mono">wifi</span>. GECKOGuard doesn't need to spot it. It checks which sign-in page is registered here.
+              {pickedReal ? "In reality, most people can't tell" : "You couldn't tell"} and neither can your phone. They look the same because copying a page is
+              trivial. The difference is a small deviation from the real domain, which you probably don't even know. GECKOGuard doesn't need to spot it. It checks which sign-in page is registered here.
             </p>
             <button type="button" className="btn btn--ghost" onClick={() => setPicked(null)}>
               <Icon name="reset" size="sm" />

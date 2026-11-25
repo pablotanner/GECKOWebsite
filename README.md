@@ -82,6 +82,9 @@ To build for a sub-path locally: `BASE_PATH=/<repo>/ npm run build`.
 
 ## Decisions where the brief left a choice
 
+- **Light mode only** (changed from the brief, which asked for dark mode too).
+  The site declares `color-scheme: light`, so it stays light on dark-mode devices.
+
 - **Astro + React islands** rather than plain Vite: static HTML for the reading
   sections, React only where state lives, and a second page (`technical`) is free.
 - **Verdict icons are SVG** (lucide check, triangle-alert, question mark), not

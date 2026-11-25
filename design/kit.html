@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
 <title>GECKOGuard Design Kit</title>
 <meta name="description" content="Tokens, components and patterns for the GECKOGuard website.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,7 +32,6 @@
   .map-tool { display: grid; gap: var(--space-5); }
   .map-panel { display: grid; gap: var(--space-4); align-content: start; }
   .map-explain { min-height: 3lh; }
-  .theme-switch { display: inline-flex; gap: var(--space-1); padding: var(--space-1); border-radius: var(--radius-pill); background: var(--color-surface-sunken); }
   @media (min-width: 48em) {
     .kit-grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .kit-grid--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -100,12 +100,6 @@
       <li><a class="nav__tab" href="#patterns">Patterns</a></li>
       <li><a class="nav__tab" href="#map">Map</a></li>
       <li><a class="nav__tab" href="#content">Content</a></li>
-      <li>
-        <div class="theme-switch" role="group" aria-label="Colour theme">
-          <button class="btn btn--ghost btn--sm btn--icon" type="button" data-theme-set="light" aria-pressed="false"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-sun"/></svg><span class="visually-hidden">Light</span></button>
-          <button class="btn btn--ghost btn--sm btn--icon" type="button" data-theme-set="dark" aria-pressed="false"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-moon"/></svg><span class="visually-hidden">Dark</span></button>
-        </div>
-      </li>
     </ul>
   </div>
 </header>
@@ -182,7 +176,7 @@
   <div class="container">
     <div class="kit-head">
       <h2 class="display-2">Colour</h2>
-      <p class="lead">Semantic tokens only. Values below are read live from the page, so switch the theme to see dark mode. Source: <code>design/tokens/colors.json</code>.</p>
+      <p class="lead">Semantic tokens only. Values below are read live from the page. Source: <code>design/tokens/colors.json</code>.</p>
     </div>
     <div class="stack" style="gap: var(--space-10)">
       <div class="stack"><p class="label">Surfaces and text</p><div class="swatches" data-swatches="surface-page surface-card surface-sunken surface-inverse text-primary text-secondary text-tertiary border-default border-strong"></div></div>
@@ -544,16 +538,6 @@
 (() => {
   const root = document.documentElement;
 
-  /* theme */
-  const themeBtns = document.querySelectorAll('[data-theme-set]');
-  const syncTheme = () => {
-    const forced = root.dataset.theme;
-    const dark = forced ? forced === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
-    themeBtns.forEach(b => b.setAttribute('aria-pressed', String((b.dataset.themeSet === 'dark') === dark)));
-    paintSwatches();
-  };
-  themeBtns.forEach(b => b.addEventListener('click', () => { root.dataset.theme = b.dataset.themeSet; syncTheme(); }));
-
   /* swatches read live values */
   function paintSwatches() {
     const cs = getComputedStyle(root);
@@ -681,7 +665,7 @@
   });
   document.getElementById('map-reset').addEventListener('click', () => { Object.assign(pos, structuredClone(start)); render(); });
 
-  syncTheme();
+  paintSwatches();
   render();
 })();
 </script>

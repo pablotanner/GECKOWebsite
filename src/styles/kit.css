@@ -506,7 +506,14 @@ a:hover { color: var(--color-accent-hover); text-decoration-thickness: var(--bor
 .facts { display: grid; gap: var(--space-4); }
 .fact { display: grid; gap: var(--space-2); padding: var(--space-5); border: var(--border-hairline) solid var(--color-border-default); border-radius: var(--radius-lg); background: var(--color-surface-card); }
 .fact__text { color: var(--color-text-secondary); }
-.fact--lead { padding: var(--space-8) var(--space-6); background: var(--color-surface-inverse); color: var(--color-text-inverse); border-color: var(--color-surface-inverse); }
+.fact--lead { 
+  padding: var(--space-4) var(--space-6); 
+  background: var(--color-surface-inverse); 
+  color: var(--color-text-inverse); 
+  border-color: var(--color-surface-inverse);
+  /* center the lead fact text in the card, but not the chip */
+  display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: left; 
+}
 .fact--lead .fact__text { color: color-mix(in srgb, var(--color-text-inverse) 78%, var(--color-surface-inverse)); }
 .fact--lead .mono { color: var(--color-text-inverse); }
 
@@ -612,6 +619,15 @@ a:hover { color: var(--color-accent-hover); text-decoration-thickness: var(--bor
 .listbox__option[aria-selected="true"] { color: var(--color-text-link); font-weight: var(--font-weight-semibold); }
 .listbox__option .icon { visibility: hidden; }
 .listbox__option[aria-selected="true"] .icon { visibility: visible; }
+
+
+.how__ct {
+  /* text in one block, filling all width*/
+  display: inline-block; 
+  width: 100%;
+  max-width: 100% !important;
+
+}
 
 /* ========================================================== text field */
 

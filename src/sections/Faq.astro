@@ -4,37 +4,16 @@ import { site } from '../config';
 
 const faqs: { q: string; a: string; tbc?: boolean }[] = [
   {
-    q: 'Does it work everywhere?',
-    a: 'Only where networks are registered. Elsewhere you get <strong>Unverified</strong>, which is no worse than today.',
-  },
-  {
-    q: 'What if the attacker blocks the lookup?',
-    a: 'Then the network can’t be verified, so it never shows <strong>Verified</strong>.',
-  },
-  {
-    q: 'What if the attacker is a legitimately registered operator?',
-    a: 'GECKO checks who is allowed to run a network at a place, not whether they behave well. A registered operator who misbehaves is out of scope.',
-  },
-  {
-    q: 'Does it need root?',
-    a: 'The current prototype runs with system-level privileges, because it assumes the check would be built into the phone’s WiFi manager.',
-  },
-  {
-    q: 'Is it available?',
-    a: 'It’s a research prototype, not a store app.',
-  },
-  {
-    q: 'Is my location sent anywhere?',
-    a: `To look up what is registered nearby, GECKOGuard sends the GECKO map server the map cells covering an area around the device (about ${site.lookupRadiusMeters} m in the prototype) and an altitude range. The server learns roughly which area you are in, not an exact point. Nothing else is sent, and no other server is contacted for the lookup.`,
-    tbc: !site.lookupAnswerConfirmed,
+    q: 'What is required for a network to participate?',
+    a: 'TODO: Whitelisting explanation',
   },
 ];
 ---
 <section class="section" id="faq" aria-labelledby="faq-title">
   <div class="container faq__grid">
     <header class="faq__head">
-      <h2 class="display-2" id="faq-title">Questions, and honest limits</h2>
-      <p class="lead">What GECKOGuard does not do matters as much as what it does.</p>
+      <h2 class="display-2" id="faq-title">Questions and limitations</h2>
+      <p class="lead">TODO</p>
     </header>
     <div class="accordion">
       {faqs.map((f, i) => (
@@ -47,7 +26,7 @@ const faqs: { q: string; a: string; tbc?: boolean }[] = [
           </h3>
           <div class="accordion__panel" id={`faq-${i}`} role="region" aria-labelledby={`faq-${i}-t`} hidden>
             <p set:html={f.a} />
-            {f.tbc && <p class="caption faq__tbc">To be confirmed by the author.</p>}
+            {f.tbc && <p class="caption faq__tbc">TODO (CHECK)</p>}
           </div>
         </div>
       ))}

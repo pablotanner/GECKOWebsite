@@ -6,12 +6,11 @@ export const site = {
   name: 'GECKOGuard',
   title: 'GECKOGuard: is this WiFi really who it says it is?',
   description:
-    'GECKOGuard checks every WiFi network against a public register of who is allowed to run which network, where. An MSc thesis project, ETH Zürich.',
+    'GECKOGuard checks every WiFi network against a public register of who is allowed to run which network, where.',
 
-  // TODO(author): fill in.
-  author: 'Author name',
-  thesisTitle: 'Thesis title',
-  githubUrl: 'https://github.com/OWNER/REPO',
+  author: 'Pablo Tanner',
+  thesisTitle: 'ETH Zurich',
+  githubUrl: 'https://github.com/pablotanner',
   thesisPdfUrl: '#', // e.g. 'assets/thesis.pdf' or an external URL
   geopkiUrl: 'https://github.com/netsec-ethz/geopki',
 
@@ -36,9 +35,9 @@ export const videos = {
     src: 'assets/video/attack-without.mp4',
     poster: 'assets/video/attack-without.jpg',
     captions: 'assets/video/attack-without.vtt',
-    title: 'Without GECKOGuard',
+    title: 'Your Phone',
     steps: [
-      { time: '0:03', text: 'Phone joins Skyport Free WiFi' },
+      { time: '0:03', text: 'Phone joins Wipkingen Airport Free' },
       { time: '0:08', text: "The attacker's sign-in page opens" },
       { time: '0:15', text: 'Email and password are typed in' },
     ],

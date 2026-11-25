@@ -5,7 +5,7 @@ import Chip from '../components/Chip.astro';
 <section class="hero survey-grid" id="top" aria-labelledby="hero-title">
   <div class="container hero__inner">
     <div class="hero__copy">
-      <h1 class="display-1" id="hero-title">Is this WiFi really who it says it is?</h1>
+      <h1 class="display-1" id="hero-title">Who is behind this network?</h1>
       <p class="lead">
         GECKOGuard checks every network against a public register of who is allowed to run which WiFi,
         where. Impostors get caught before you type anything.
@@ -17,31 +17,36 @@ import Chip from '../components/Chip.astro';
     </div>
 
     <figure class="hero__figure">
-      <div class="phone" role="img" aria-label="A phone's WiFi list showing two networks both called Skyport Free WiFi. One is marked Verified, the other Conflict. A third network, BeanThere Guest, is Unverified.">
+      <div class="phone" role="img" aria-label="A phone's WiFi list showing two networks both called Wipkingen Airport Free. One is marked Verified, the other Conflict. A third network, StarCoffee Free, is Unverified.">
         <div class="phone__screen" aria-hidden="true">
-          <div class="phone__status"><span>09:41</span><span>Skyport Terminal</span></div>
+          <div class="phone__status"><span>09:41</span><span>Wipkingen Airport</span></div>
           <div class="phone__header">
-            <p class="title">WiFi</p>
-            <p class="caption">Checked by GECKOGuard</p>
+            <p class="title">Networks</p>
+            <p class="caption" hidden>Checked by GECKOGuard</p>
           </div>
           <div class="phone__body">
             <div class="network" data-verdict="verified">
               <span class="network__icon"><Icon name="wifi" /></span>
-              <span class="network__ssid">Skyport Free WiFi</span>
+              <span class="network__ssid">Wipkingen Airport Free</span>
               <span class="network__meta"><Chip verdict="verified" /></span>
             </div>
             <div class="network" data-verdict="conflict">
               <span class="network__icon"><Icon name="wifi" /></span>
-              <span class="network__ssid">Skyport Free WiFi</span>
+              <span class="network__ssid">Wipkingen Airport Free</span>
               <span class="network__meta"><Chip verdict="conflict" /></span>
+            </div>
+            <div class="network" data-verdict="verified">
+              <span class="network__icon"><Icon name="wifi" /></span>
+              <span class="network__ssid">StarCoffee Free</span>
+              <span class="network__meta"><Chip verdict="verified" /></span>
             </div>
             <div class="network" data-verdict="unverified">
               <span class="network__icon"><Icon name="wifi" /></span>
-              <span class="network__ssid">BeanThere Guest</span>
+              <span class="network__ssid">iPhone Pablo Hotspot</span>
               <span class="network__meta"><Chip verdict="unverified" /></span>
             </div>
             <p class="hero__why">
-              Same name, but its sign-in page isn't the one registered for this terminal.
+              Same name, but its sign-in page isn't the one registered for this location.
             </p>
           </div>
         </div>

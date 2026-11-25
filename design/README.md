@@ -6,13 +6,13 @@ parcels, hatching, corner markers, monospaced entries. Calm, exact,
 accountable; never a hacker aesthetic.
 
 Open `design/kit.html` in a browser (after `npm run tokens`) to see every token
-and component in light and dark.
+and component.
 
 ## Files
 
 | File | Role |
 |---|---|
-| `design/tokens/colors.json` | Primitive → semantic → component colours, plus the `dark` override map |
+| `design/tokens/colors.json` | Primitive → semantic → component colours (light only) |
 | `design/tokens/typography.json` | Families, fluid sizes, leading, tracking, measures |
 | `design/tokens/spacing.json` | 4px scale, layout, breakpoints (reference), z-index |
 | `design/tokens/shape.json` | Radius, borders, shadows, focus, hatch, survey grid |

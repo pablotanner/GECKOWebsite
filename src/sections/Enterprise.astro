@@ -7,7 +7,7 @@ import type { IconName } from '../lib/icons';
 const helps: { icon: IconName; text: string }[] = [
   { icon: 'server', text: 'It finds out which login server the network is registered to use, over a public, password-free onboarding login.' },
   { icon: 'key', text: 'It sends your password only to that server, checked automatically.' },
-  { icon: 'ban', text: 'There is no “Trust” button to tap by mistake.' },
+  { icon: 'ban', text: 'There is no "Trust" button for the user to tap by mistake or laziness.' },
 ];
 ---
 <section class="section enterprise" id="enterprise" aria-labelledby="enterprise-title">
@@ -16,7 +16,7 @@ const helps: { icon: IconName; text: string }[] = [
       <h2 class="display-2" id="enterprise-title">It's worse for enterprise WiFi.</h2>
       <p class="lead">
         On eduroam and company networks, your phone sends your password to whichever server answers.
-        An impostor answers with its own certificate, and the phone shows a <q>Trust this certificate?</q> prompt. One tap, and the password is gone.
+        An impostor answers with its own certificate and the phone shows a <q>Trust this certificate?</q> prompt. One tap and the password is gone.
       </p>
       <div class="enterprise__helps">
         <p class="label">How GECKOGuard helps</p>

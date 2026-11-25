@@ -1,6 +1,6 @@
 {
   "$schema": "https://design-tokens.github.io/community-group/format/",
-  "$description": "GECKOGuard colour tokens. Three tiers: primitive (palette, never used directly) -> semantic (by intent, swapped for dark mode) -> component (scoped, always reference semantic). Built into src/styles/tokens.css by scripts/build-tokens.mjs.",
+  "$description": "GECKOGuard colour tokens. Three tiers: primitive (palette, never used directly) -> semantic (by intent, one light theme) -> component (scoped, always reference semantic). Built into src/styles/tokens.css by scripts/build-tokens.mjs.",
 
   "primitive": {
     "$description": "Raw palette. Paper = warm surfaces, ink = cool text greys, cobalt = the single brand accent, green/red = verdicts only.",
@@ -76,7 +76,7 @@
   },
 
   "semantic": {
-    "$description": "Use these (as CSS variables --color-*) in designs and page styles. Dark values live in the `dark` map below.",
+    "$description": "Use these (as CSS variables --color-*) in designs and page styles. The site is light-only.",
     "surface": {
       "page":    { "$type": "color", "$value": "{primitive.paper.50}" },
       "card":    { "$type": "color", "$value": "{primitive.paper.0}" },
@@ -144,7 +144,7 @@
   },
 
   "component": {
-    "$description": "Scoped tokens. Always reference semantic, so they follow dark mode automatically.",
+    "$description": "Scoped tokens. Always reference semantic, so a palette change reaches every component.",
     "button": {
       "primary-bg":        { "$type": "color", "$value": "{semantic.action.primary}" },
       "primary-bg-hover":  { "$type": "color", "$value": "{semantic.action.primary-hover}" },
@@ -167,74 +167,6 @@
       "bg":     { "$type": "color", "$value": "{semantic.surface.card}" },
       "rule":   { "$type": "color", "$value": "{semantic.border.default}" },
       "seal":   { "$type": "color", "$value": "{semantic.accent.default}" }
-    }
-  },
-
-  "dark": {
-    "$description": "Dark-mode overrides at the semantic tier (keys are semantic paths without the `semantic.` prefix). Primitives never change.",
-    "surface": {
-      "page":    { "$value": "{primitive.ink.900}" },
-      "card":    { "$value": "{primitive.ink.860}" },
-      "raised":  { "$value": "{primitive.ink.840}" },
-      "sunken":  { "$value": "{primitive.ink.950}" },
-      "overlay": { "$value": "{primitive.ink.a90}" },
-      "inverse": { "$value": "{primitive.paper.125}" },
-      "device":  { "$value": "{primitive.ink.680}" }
-    },
-    "text": {
-      "primary":   { "$value": "{primitive.paper.125}" },
-      "secondary": { "$value": "{primitive.ink.300}" },
-      "tertiary":  { "$value": "{primitive.ink.350}" },
-      "link":      { "$value": "{primitive.cobalt.300}" },
-      "on-action": { "$value": "{primitive.ink.900}" },
-      "inverse":   { "$value": "{primitive.ink.900}" },
-      "disabled":  { "$value": "{primitive.ink.480}" }
-    },
-    "action": {
-      "primary":        { "$value": "{primitive.paper.125}" },
-      "primary-hover":  { "$value": "{primitive.paper.0}" },
-      "primary-active": { "$value": "{primitive.paper.250}" },
-      "secondary-hover":  { "$value": "{primitive.ink.790}" },
-      "secondary-active": { "$value": "{primitive.ink.740}" },
-      "disabled":       { "$value": "{primitive.ink.740}" }
-    },
-    "border": {
-      "subtle":  { "$value": "{primitive.ink.780}" },
-      "default": { "$value": "{primitive.ink.720}" },
-      "strong":  { "$value": "{primitive.ink.450}" }
-    },
-    "accent": {
-      "default":   { "$value": "{primitive.cobalt.300}" },
-      "hover":     { "$value": "{primitive.cobalt.200}" },
-      "subtle":    { "$value": "{primitive.cobalt.900}" },
-      "on-accent": { "$value": "{primitive.ink.900}" }
-    },
-    "focus": {
-      "ring": { "$value": "{primitive.cobalt.300}" }
-    },
-    "verdict": {
-      "verified-fg":     { "$value": "{primitive.green.300}" },
-      "verified-bg":     { "$value": "{primitive.green.950}" },
-      "verified-border": { "$value": "{primitive.green.800}" },
-      "conflict-fg":     { "$value": "{primitive.red.300}" },
-      "conflict-bg":     { "$value": "{primitive.red.950}" },
-      "conflict-border": { "$value": "{primitive.red.800}" },
-      "unverified-fg":     { "$value": "{primitive.ink.200}" },
-      "unverified-bg":     { "$value": "{primitive.ink.740}" },
-      "unverified-border": { "$value": "{primitive.ink.650}" }
-    },
-    "map": {
-      "ground":          { "$value": "{primitive.ink.880}" },
-      "building":        { "$value": "{primitive.ink.760}" },
-      "building-stroke": { "$value": "{primitive.ink.680}" },
-      "road":            { "$value": "{primitive.ink.820}" },
-      "area-stroke":     { "$value": "{primitive.cobalt.300}" },
-      "area-fill":       { "$value": "{primitive.cobalt.a10-dark}" },
-      "area-hatch":      { "$value": "{primitive.cobalt.a25-dark}" },
-      "attacker":        { "$value": "{primitive.red.300}" }
-    },
-    "shadow": {
-      "color": { "$value": "{primitive.ink.990}" }
     }
   }
 }

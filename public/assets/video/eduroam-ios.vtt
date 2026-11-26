@@ -1,0 +1,13 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:05.000
+Connected to eduroam-lab.
+
+00:00:05.000 --> 00:00:16.000
+The connection drops (e.g. due to jamming): an impostor takes over
+
+00:00:16.000 --> 00:00:18.000
+User is asked to accept the new certificate
+
+00:00:18.000 --> 00:00:20.700
+User taps "Accept" and their plaintext credentials are sent to the attacker

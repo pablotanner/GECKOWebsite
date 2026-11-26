@@ -16,7 +16,12 @@ const helps: { icon: IconName; text: string }[] = [
       <h2 class="display-2" id="enterprise-title">It's worse for enterprise WiFi.</h2>
       <p class="lead">
         On eduroam and company networks, your phone sends your password to whichever server answers.
-        An impostor answers with its own certificate and the phone shows a <q>Trust this certificate?</q> prompt. One tap and the password is gone.
+        An impostor answers with its own certificate, and the phone shows a <q>Trust this certificate?</q> prompt. One tap, and the password is gone.
+      </p>
+      <p class="enterprise__context">
+        The video shows the sneaky and most illustrative version: the iPhone was already connected. The impostor knocks it off the network
+        and when the phone reconnects, the prompt looks innocent and the user might feel required to trust it, in order to get back online. A first connection is even easier to
+        attack: a phone without a profile shows the same prompt for the real network, so accepting it is what everyone does.
       </p>
       <div class="enterprise__helps">
         <p class="label">How GECKOGuard helps</p>
@@ -37,6 +42,7 @@ const helps: { icon: IconName; text: string }[] = [
   .enterprise__grid { display: grid; gap: var(--space-12); }
   .enterprise__copy { display: grid; gap: var(--space-8); align-content: start; }
   .enterprise__helps { display: grid; gap: var(--space-4); }
+  .enterprise__context { max-width: var(--measure-lead); color: var(--color-text-secondary); margin-top: calc(-1 * var(--space-4)); }
   .enterprise__list { list-style: none; display: grid; }
   .enterprise__list li {
     display: grid; grid-template-columns: auto 1fr; gap: var(--space-4); align-items: start;

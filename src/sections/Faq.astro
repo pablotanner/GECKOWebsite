@@ -1,16 +1,32 @@
 ---
 import Icon from '../components/Icon.astro';
-import { site } from '../config';
 import { url } from '../lib/url';
+
+const tech = url('technical/#enterprise');
 
 const faqs: { q: string; a: string; tbc?: boolean }[] = [
   {
-    q: 'What is required for a network to participate?',
-    a: 'TODO: Whitelisting explanation',
+    q: 'What does a network need to take part?',
+    a: `
+      <p>Two things, both done once by the operator:</p>
+      <ul>
+        <li><strong>Register the network.</strong> The operator proves to a Geo CA that it runs the network at this place and registers its name, security type and, if it has one, its sign-in page domains. The result is a GeoCert in the public GECKO map.</li>
+        <li><strong>Let phones reach the GECKO map before sign-in.</strong> Networks with a sign-in page already let a few addresses through before you log in, such as the sign-in page itself. The GECKO map joins that list, so the phone can check the network before you type anything.</li>
+      </ul>
+      <p>Enterprise networks such as eduroam should also accept GECKOGuard's shared onboarding login and give it a walled garden that reaches only GECKO. Universities publish a realm record, so their students are protected on other campuses too. <a href="${tech}">How that works, step by step</a>.</p>
+      <p>Networks that don't take part keep working as before. Phones show them as <strong>Unverified</strong>.</p>`,
   },
   {
-    q: 'Why not just use eduroam CAT for enterprise networks?',
-    a: 'TODO: Explain that first of all CAT is not available for all networks and that it requires the user to install a profile (which requires internet connectivity and users are often reluctant or too lazy to do so), the concepts behind GECKOGuard (especially walled garden in enterprise network onboarding) make it easier to use.',
+    q: 'Why not just use eduroam CAT?',
+    a: `
+      <p><strong>eduroam CAT</strong> (Configuration Assistant Tool) is how universities hand out safe eduroam settings today. You download your university's profile from cat.eduroam.org or the geteduroam app and it installs the login server's name and certificate authority on your device. With that profile, your phone rejects an impostor's server. That is exactly the protection GECKOGuard sets up too.</p>
+      <p>The catch is getting the profile:</p>
+      <ul>
+        <li>It needs internet first, so you have to set it up before you arrive, over another network.</li>
+        <li>Everyone has to know about it and do it. Many people just tap eduroam and accept the certificate prompt.</li>
+        <li>It only covers eduroam and only institutions that publish a profile. Company networks rely on their own device management for the same thing.</li>
+      </ul>
+      <p>GECKOGuard ends up with the same kind of pinned profile, but gets it during the first connection, through the onboarding walled garden and checks it through GECKO. There is no separate step to remember and like CAT it only happens once per account. <a href="${tech}">The eduroam example</a> shows it step by step.</p>`,
   },
 ];
 ---
@@ -31,7 +47,7 @@ const faqs: { q: string; a: string; tbc?: boolean }[] = [
             </button>
           </h3>
           <div class="accordion__panel" id={`faq-${i}`} role="region" aria-labelledby={`faq-${i}-t`} hidden>
-            <p set:html={f.a} />
+            <div class="faq__answer" set:html={f.a} />
             {f.tbc && <p class="caption faq__tbc">TODO (CHECK)</p>}
           </div>
         </div>
@@ -55,6 +71,9 @@ const faqs: { q: string; a: string; tbc?: boolean }[] = [
   .faq__grid { display: grid; gap: var(--space-10); }
   .faq__head { display: grid; gap: var(--space-4); align-content: start; }
   .faq__tbc { margin-top: var(--space-3); }
+  .faq__answer { display: grid; gap: var(--space-3); }
+  .faq__answer :global(ul) { display: grid; gap: var(--space-2); padding-inline-start: var(--space-5); }
+  .faq__answer :global(strong) { color: var(--color-text-primary); font-weight: var(--font-weight-semibold); }
   @media (min-width: 56em) {
     .faq__grid { grid-template-columns: 5fr 7fr; gap: var(--space-16); }
     .faq__head { position: sticky; top: calc(var(--layout-nav-height) + var(--space-8)); }

@@ -17,7 +17,7 @@ const toc = [
   { id: 'states', label: 'From result to verdict' },
   { id: 'enterprise', label: 'eduroam, step by step' },
   { id: 'rules', label: 'Rules that keep it strict' },
-  //{ id: 'limits', label: 'Open points' },
+  { id: 'limits', label: 'Open points' },
 ];
 
 // Fictional example, same shape as the prototype's certificates (docs/geocert-schema.md in the app repository).
@@ -103,7 +103,7 @@ const example = `{
               </dl>
             </article>
             <figure class="tech__code">
-              <figcaption class="caption">The same certificate as stored in the map (shortened)</figcaption>
+              <figcaption class="caption">How the GeoCert is structured and stored in the map (simplified)</figcaption>
               <pre tabindex="0" aria-label="Example GeoCert as JSON"><code>{example}</code></pre>
             </figure>
           </div>
@@ -174,7 +174,7 @@ const example = `{
             <tbody>
               <tr><td><code>VERIFIED</code></td><td>The network presented what is registered for it here.</td><td><Chip verdict="verified" /></td></tr>
               <tr><td><code>CONFLICT</code></td><td>Something is registered for this name here, but the network presented something else, or the map's proof failed.</td><td><Chip verdict="conflict" /></td></tr>
-              <tr><td><code>UNRECOGNIZED</code></td><td>Certificates exist here, but none matches the presented domain. On an exclusive name this becomes a Conflict.</td><td><Chip verdict="conflict" /> or <Chip verdict="unverified" /></td></tr>
+              <tr hidden><td><code>UNRECOGNIZED</code></td><td>Certificates exist here, but none matches the presented domain. On an exclusive name this becomes a Conflict.</td><td><Chip verdict="conflict" /> or <Chip verdict="unverified" /></td></tr>
               <tr><td><code>UNVERIFIED</code></td><td>Nothing is registered for this network at this location.</td><td><Chip verdict="unverified" /></td></tr>
               <tr><td><code>UNREACHABLE</code></td><td>The map couldn't be reached.</td><td><Chip verdict="unverified" /></td></tr>
             </tbody>
@@ -185,19 +185,16 @@ const example = `{
         <section id="enterprise" aria-labelledby="enterprise-title">
           <h2 class="title-lg" id="enterprise-title">Enterprise WiFi and eduroam, step by step</h2>
           <p>
-            Enterprise WiFi networks, such as eduroam or a company's internal network, give each user their own credentials (username and password), so there is usually no captive portal or sign-in page.
-            On these networks, the phone sends the password itself, inside an
-            encrypted tunnel, to whichever login server answers. Two things make this hard to protect: the phone needs to
-            know in advance which server to expect, and there is no internet before the login succeeds, so it can't look
-            that up first. Here is one login, message by message (TODO: Make clear that this onboarding and profile installation is only required once per realm such as university login, once profile is installed any subsequent connections know what profile to expect and will reject impostors that use fake certificates).
+            Enterprise networks, such as eduroam or a company's internal WiFi, give every user their own username and
+            password, so there is no sign-in page. The phone sends the password itself, inside an encrypted tunnel, to
+            whichever login server answers. Two things make this hard to protect: the phone has to know in advance which
+            server to expect, and there is no internet before the login succeeds, so it can't look that up first.
+          </p>
+          <p>
+            Here is one first login, message by message. It is a one-time setup per account: once the phone has the right
+            profile, every later connection is protected without any of these steps.
           </p>
           <EduroamScenario />
-          <p class="note"><Icon name="info" /><span>
-            In this example, Pablo is at their home campus, <code>uni-wipkingen.ch</code>, so the GeoCert already contains the login server's name and key. If they were doing this "first connection" at a different campus (as a visitor), the login server information would have 
-            been fetched from the realm record server (TODO: link to information/limitations of the realm record server concept, also improve this text maybe) (also signed and pinned), during the onboarding walled garden.
-            In the prototype, the rule "a password only goes into a profile whose pins
-            came from a verified record" is enforced in code, through exactly one code path.
-          </span></p>
         </section>
 
         <!-- ============================================ Rules -->
@@ -209,17 +206,18 @@ const example = `{
             <li><strong>Unknown values never match.</strong> A security mode or portal role the client doesn't know is treated as different from everything observed.</li>
             <li><strong>Missing means strict.</strong> Every yes/no field defaults to the stricter reading, so leaving a field out never weakens a check.</li>
             <li><strong>Pins, not the Web PKI.</strong> A sign-in page is trusted because its key is registered, not because some certificate authority signed it.</li>
+            <li><strong>One way in for passwords.</strong> In the prototype, a password can only be attached to a network profile whose pins came from a verified GeoCert or realm record, through exactly one code path.</li>
             <li><strong>The algorithm is in the name.</strong> Hashes are fields like <code>pinned_spki_sha256</code>; a pin in an algorithm the client doesn't know counts as no pin.</li>
           </ul>
         </section>
 
         <!-- ============================================ Limits -->
-        <section id="limits" aria-labelledby="limits-title" style={{display: 'none'}}>
+        <section id="limits" aria-labelledby="limits-title">
           <h2 class="title-lg" id="limits-title">Open points</h2>
           <ul class="tech__list">
-            <li><strong>Freshness.</strong> An attacker could replay an old but genuinely signed answer. How the phone learns that a map head is recent is not solved yet.</li>
             <li><strong>System privileges.</strong> The design assumes the check is part of the phone's WiFi manager. The test tablet can't be rooted, so the prototype runs on public Android APIs, which costs some extra approval dialogs. That is a prototype artifact, not a design limit.</li>
-            <li><strong>Name exclusivity on the server.</strong> The map should refuse a second operator registering the same name in an overlapping area. The client already assumes this; the server check isn't implemented yet.</li>
+            <li><strong>Realm records depend on every university taking part.</strong> Visitors are only protected if their home university publishes a realm record and only whoever controls a realm (a domain, such as <code>uni-wipkingen.ch</code>) may publish one, checked like a domain in the Web PKI.</li>
+            <li><strong>Realm records in the prototype</strong> come from a separate server, signed with one key pinned in the app. A deployment would keep them in the GECKO map with the same proofs as GeoCerts.</li>
             <li><strong>Registered but misbehaving operators</strong> are out of scope. GECKO checks who may run a network at a place, not how they behave.</li>
           </ul>
         </section>

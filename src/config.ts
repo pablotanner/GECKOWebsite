@@ -54,14 +54,15 @@ export const videos = {
     ],
   },
   eduroam: {
-    src: 'assets/video/eduroam-ios.mov',
+    src: 'assets/video/eduroam-ios.mp4',
     poster: 'assets/video/eduroam-ios.jpg',
     captions: 'assets/video/eduroam-ios.vtt',
     title: 'The trust prompt on an iPhone',
     steps: [
-      { time: '0:02', text: 'Phone joins an impostor eduroam' },
-      { time: '0:05', text: '"Trust this certificate?" appears' },
-      { time: '0:08', text: 'One tap, and the password is sent' },
+      { time: '0:00', text: 'Connected to eduroam-lab.' },
+      { time: '0:05', text: 'The connection drops (e.g. due to jamming): an impostor takes over' },
+      { time: '0:16', text: 'User is asked to accept the new certificate' },
+      { time: '0:18', text: 'User taps "Accept" and their plaintext credentials are sent to the attacker' },
     ],
   },
 } satisfies Record<string, VideoConfig>;

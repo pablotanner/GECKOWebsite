@@ -55,7 +55,7 @@ export const areas: Area[] = [
   {
     id: 'uni',
     name: 'Wipkingen University',
-    label: 'Wipkingen University',
+    label: 'University of Wipkingen',
     ssid: 'UniWip 5G',
     points: [{ x: 572, y: 368 }, { x: 756, y: 368 }, { x: 756, y: 472 }, { x: 572, y: 472 }],
     ap: { x: 700, y: 436 },

@@ -51,30 +51,30 @@ const onboarding: Step[] = [
     from: 'eduroam', to: 'Phone',
     fields: [
       { k: 'access', v: 'walled garden' },
-      { k: 'reachable', v: { real: 'GECKO map only', impostor: 'whatever the attacker allows' } },
+      { k: 'reachable', v: { real: 'GECKO map and realm records only', impostor: 'whatever the attacker allows' } },
       { k: 'time limit', v: '60 s' },
     ],
-    note: { real: 'The network lets the phone reach the GECKO map and nothing else.', impostor: 'The impostor accepts the public login too. It costs it nothing.' },
+    note: { real: 'The network lets the phone reach GECKO’s services and nothing else.', impostor: 'The impostor accepts the public login too. It costs it nothing.' },
   },
   {
     from: 'Phone', to: 'GECKO map',
     fields: [
       { k: 'area', v: 'map cells around the library' },
-      { k: 'login record for', v: 'uni-wipkingen.ch' },
     ],
-    note: 'GECKOGuard asks what is registered here and for the login record of Pablo\'s university.',
+    note: 'GECKOGuard asks what is registered here.',
   },
   {
     from: 'GECKO map', to: 'Phone',
     fields: [
       { k: 'network', v: 'eduroam at Wipkingen University' },
+      { k: 'for accounts', v: '@uni-wipkingen.ch' },
       { k: 'login server', v: SERVER },
       { k: 'CA key', v: PIN },
       { k: 'method', v: 'PEAP with MSCHAPv2' },
       { k: 'proof', v: 'valid' },
     ],
     note: {
-      real: 'The answer comes with a proof, so GECKOGuard can check it even though it came over this network.',
+      real: 'The site’s own GeoCert lists the login server for its own students. It comes with a proof, so GECKOGuard can check it even though it arrived over this network.',
       impostor: 'The impostor relays the genuine answer from the real map. It can, because the answer is public, and it can\'t alter it without breaking the proof.',
     },
   },
@@ -243,22 +243,73 @@ const isVariant = (v: V): v is { real: string; impostor: string } => typeof v !=
       Either way, no profile gets Pablo's password.
     </p>
 
+    <div class="sc__next" data-show="real">
+      <p class="title">Next time: no setup at all</p>
+      <p>
+        This was a one-time setup for Pablo's account. The profile from step 5 stays on the phone (as if Pablo was using eduroam CAT). Whenever Pablo is near
+        eduroam again, at home or on another campus, the phone connects with that profile directly and its pins reject an
+        impostor's certificate exactly as in step 6. GECKOGuard only goes through onboarding again for a new account, or
+        when Uni Wipkingen moves to a new login server or CA, which the old profile would reject.
+      </p>
+    </div>
+
     <details class="sc__details">
-      <summary><Icon name="file" size="sm" />See the GeoCert and login record behind this scenario</summary>
+      <summary><Icon name="file" size="sm" />See the GeoCert behind this scenario</summary>
       <div class="sc__docs">
         <figure class="sc__doc">
           <figcaption class="caption">Site GeoCert: eduroam at Wipkingen University, returned by the GECKO map in step 4</figcaption>
           <pre tabindex="0" aria-label="Site GeoCert as JSON"><code>{geocertJson}</code></pre>
         </figure>
+        <p class="caption">
+          It says a registered eduroam runs here and which login servers its own users (<code>@uni-wipkingen.ch</code>)
+          must reach. Hashes are base64 in the certificate; the steps above show them shortened.
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <!-- Visiting -->
+  <section class="sc__block" aria-labelledby="sc-visit">
+    <h3 class="title" id="sc-visit">Visiting another university</h3>
+    <p class="sc__text">
+      A week later Pablo spends a day at a different university (e.g. Limmat Institute), which also runs eduroam. Pablo's password still goes to
+      Uni Wipkingen's login server: in eduroam, the visited network forwards every login to the user's home university.
+    </p>
+    <p class="sc__text">
+      The Limmat Institute's GeoCert lists only its own login servers. It can't list Uni Wipkingen's and it shouldn't: a
+      site allowed to register login servers for other universities could enter its own and collect every visitor's
+      password. So the pins have to come from Uni Wipkingen itself.
+    </p>
+    <div class="sc__compare">
+      <div class="sc__source">
+        <p class="label">At home</p>
+        <p class="title">The site's GeoCert</p>
+        <p>The network's own registration lists the login servers for its own users.</p>
+      </div>
+      <div class="sc__source">
+        <p class="label">Visiting</p>
+        <p class="title">The home university's realm record</p>
+        <p>Uni Wipkingen publishes its login details once, for <code>eduroam / uni-wipkingen.ch</code>, on a realm record server.</p>
+      </div>
+    </div>
+    <p class="sc__text">
+      A realm record says how logins for one university work: which login server, which CA, which method. It is signed,
+      so the phone can check it like a GeoCert. During onboarding the walled garden lets the phone reach the GECKO map and
+      the realm record server. GECKOGuard checks that the Limmat Institute runs a registered eduroam, fetches Uni
+      Wipkingen's record, and builds the same pinned profile as in step 5. If Pablo already set up the account at home,
+      that profile is used as it is. The realm record concept has limits of its own,
+      listed under <a href="#limits">open points</a>.
+    </p>
+    <details class="sc__details">
+      <summary><Icon name="file" size="sm" />See Uni Wipkingen's realm record</summary>
+      <div class="sc__docs">
         <figure class="sc__doc">
-          <figcaption class="caption">Login record for <code>uni-wipkingen.ch</code>, also step 4 (sent as protobuf, decoded here)</figcaption>
-          <pre tabindex="0" aria-label="Login record, decoded"><code>{realmRecord}</code></pre>
+          <figcaption class="caption">Realm record for <code>uni-wipkingen.ch</code> in eduroam (sent as protobuf, decoded here)</figcaption>
+          <pre tabindex="0" aria-label="Realm record, decoded"><code>{realmRecord}</code></pre>
         </figure>
         <p class="caption">
-          The GeoCert says a registered eduroam runs here and which servers its own users must reach. The login record
-          says how logins for one university work, wherever its students are. Hashes are base64 in the records; the steps
-          above show them shortened. In the prototype the login record is signed with a key pinned in the app. In a full
-          deployment it would sit in the GECKO map, with the same proofs as GeoCerts.
+          In the prototype, realm records come from a separate server and are signed with a key pinned in the app. In a full
+          deployment they would sit in the GECKO map, with the same proofs as GeoCerts.
         </p>
       </div>
     </details>
@@ -377,6 +428,28 @@ const isVariant = (v: V): v is { real: string; impostor: string } => typeof v !=
     font-size: var(--text-xs); line-height: var(--leading-snug);
   }
   .sc__doc code { font-size: inherit; }
+
+  .sc__next {
+    display: grid; gap: var(--space-2);
+    padding: var(--space-5);
+    border-radius: var(--radius-lg);
+    background: var(--color-accent-subtle);
+    color: var(--color-text-secondary);
+    max-width: var(--measure-prose);
+  }
+  .sc__next .title { color: var(--color-text-primary); }
+  .sc__text { max-width: var(--measure-prose); color: var(--color-text-secondary); }
+  .sc__compare { display: grid; gap: var(--space-3); max-width: var(--measure-prose); }
+  .sc__source {
+    display: grid; gap: var(--space-1);
+    padding: var(--space-4) var(--space-5);
+    border: var(--border-hairline) solid var(--color-border-default);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-card);
+    font-size: var(--text-sm); color: var(--color-text-secondary);
+  }
+  .sc__source .title { color: var(--color-text-primary); }
+  @media (min-width: 40em) { .sc__compare { grid-template-columns: 1fr 1fr; } }
 
   /* Variant switching. Without JS the real network is shown and the toggle is hidden. */
   .sc[data-mode='real'] [data-show='impostor'],

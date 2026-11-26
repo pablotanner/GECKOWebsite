@@ -215,7 +215,7 @@ const example = `{
         <section id="limits" aria-labelledby="limits-title">
           <h2 class="title-lg" id="limits-title">Open points</h2>
           <ul class="tech__list">
-            <li><strong>System privileges.</strong> The design assumes the check is part of the phone's WiFi manager. The test tablet can't be rooted, so the prototype runs on public Android APIs, which costs some extra approval dialogs. That is a prototype artifact, not a design limit.</li>
+            <li><strong>System privileges.</strong> The design assumes the check is part of the device's WiFi manager or that it has the necessary permissions to perform the checks (e.g. rooted device). The prototype app currently runs on public Android APIs, which costs some extra approval dialogs and leaves it vulnerable to some captive portal attacks due to lack of continuous network monitoring.</li>
             <li><strong>Realm records depend on every university taking part.</strong> Visitors are only protected if their home university publishes a realm record and only whoever controls a realm (a domain, such as <code>uni-wipkingen.ch</code>) may publish one, checked like a domain in the Web PKI.</li>
             <li><strong>Realm records in the prototype</strong> come from a separate server, signed with one key pinned in the app. A deployment would keep them in the GECKO map with the same proofs as GeoCerts.</li>
             <li><strong>Registered but misbehaving operators</strong> are out of scope. GECKO checks who may run a network at a place, not how they behave.</li>

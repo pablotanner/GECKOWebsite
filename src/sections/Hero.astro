@@ -1,59 +1,77 @@
 ---
 import Icon from '../components/Icon.astro';
 import Chip from '../components/Chip.astro';
+import type { Verdict } from '../lib/icons';
+
+const networks: { ssid: string; verdict: Verdict }[] = [
+  { ssid: 'Wipkingen Airport Free', verdict: 'verified' },
+  { ssid: 'Wipkingen Airport Free', verdict: 'conflict' },
+  { ssid: 'StarCoffee Free', verdict: 'verified' },
+  { ssid: 'iPhone Pablo Hotspot', verdict: 'unverified' },
+];
 ---
 <section class="hero survey-grid" id="top" aria-labelledby="hero-title">
   <div class="container hero__inner">
     <div class="hero__copy">
       <h1 class="display-1" id="hero-title">Who is behind this network?</h1>
       <p class="lead">
-        GECKOGuard checks every network against a public register of who is allowed to run which WiFi,
-        where. Impostors get caught before you type anything.
+        Anyone can name their WiFi <span class="mono">Wipkingen Airport Free</span>. GECKOGuard checks each network
+        against a public register of who is allowed to run which WiFi, where, and flags impostors before you type
+        anything.
       </p>
       <div class="cluster">
-        <a class="btn btn--primary" href="#demo">See the attack <Icon name="arrowDown" size="sm" /></a>
-        <a class="btn btn--secondary" href="#how-it-works">How it works</a>
+        <a class="btn btn--primary" href="#problem">Spot the fake <Icon name="arrowDown" size="sm" /></a>
+        <a class="btn btn--secondary" href="#demo">See the attack</a>
       </div>
     </div>
 
-    <figure class="hero__figure">
-      <div class="phone" role="img" aria-label="A phone's WiFi list showing two networks both called Wipkingen Airport Free. One is marked Verified, the other Conflict. A third network, StarCoffee Free, is Unverified.">
+    <figure class="hero__figure" id="hero-phone" data-state="done">
+      <div class="phone" role="img" aria-label="A phone's WiFi list. Two networks are both called Wipkingen Airport Free: GECKOGuard marks one Verified and the other Conflict. StarCoffee Free is Verified, and a personal hotspot is Unverified.">
         <div class="phone__screen" aria-hidden="true">
           <div class="phone__status"><span>09:41</span><span>Wipkingen Airport</span></div>
           <div class="phone__header">
             <p class="title">Networks</p>
-            <p class="caption" hidden>Checked by GECKOGuard</p>
           </div>
           <div class="phone__body">
-            <div class="network" data-verdict="verified">
-              <span class="network__icon"><Icon name="wifi" /></span>
-              <span class="network__ssid">Wipkingen Airport Free</span>
-              <span class="network__meta"><Chip verdict="verified" /></span>
-            </div>
-            <div class="network" data-verdict="conflict">
-              <span class="network__icon"><Icon name="wifi" /></span>
-              <span class="network__ssid">Wipkingen Airport Free</span>
-              <span class="network__meta"><Chip verdict="conflict" /></span>
-            </div>
-            <div class="network" data-verdict="verified">
-              <span class="network__icon"><Icon name="wifi" /></span>
-              <span class="network__ssid">StarCoffee Free</span>
-              <span class="network__meta"><Chip verdict="verified" /></span>
-            </div>
-            <div class="network" data-verdict="unverified">
-              <span class="network__icon"><Icon name="wifi" /></span>
-              <span class="network__ssid">iPhone Pablo Hotspot</span>
-              <span class="network__meta"><Chip verdict="unverified" /></span>
-            </div>
+            {networks.map((n, i) => (
+              <div class="network hero__net" data-verdict={n.verdict} style={`--i: ${i}`}>
+                <span class="network__icon"><Icon name="wifi" /></span>
+                <span class="network__ssid">{n.ssid}</span>
+                <span class="network__meta">
+                  <span class="hero__checking"><span class="chip chip--checking"><Icon name="search" /><span>Checking</span></span></span>
+                  <span class="hero__verdict"><Chip verdict={n.verdict} /></span>
+                </span>
+              </div>
+            ))}
             <p class="hero__why">
               Same name, but its sign-in page isn't the one registered for this location.
             </p>
           </div>
         </div>
       </div>
+      <button class="btn btn--ghost btn--sm hero__replay" type="button" id="hero-replay">
+        <Icon name="reset" size="sm" />Run the check again
+      </button>
     </figure>
   </div>
 </section>
+
+<!-- Runs before first paint, so the phone never flashes the answer before "Checking". -->
+<script is:inline>
+  (function () {
+    var fig = document.getElementById('hero-phone');
+    if (!fig || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var timer;
+    function run() {
+      clearTimeout(timer);
+      fig.dataset.state = 'checking';
+      timer = setTimeout(function () { fig.dataset.state = 'done'; }, 1600);
+    }
+    run();
+    var btn = document.getElementById('hero-replay');
+    if (btn) btn.addEventListener('click', run);
+  })();
+</script>
 
 <style>
   .hero {
@@ -62,7 +80,7 @@ import Chip from '../components/Chip.astro';
   }
   .hero__inner { display: grid; gap: var(--space-12); align-items: center; }
   .hero__copy { display: grid; gap: var(--space-6); }
-  .hero__figure { justify-self: center; width: min(100%, 19rem); }
+  .hero__figure { justify-self: center; width: min(100%, 19rem); display: grid; gap: var(--space-3); justify-items: center; }
   .hero__figure .phone { width: 100%; }
   .hero__why {
     margin-top: var(--space-2);
@@ -72,7 +90,31 @@ import Chip from '../components/Chip.astro';
     font-size: var(--text-xs);
     line-height: var(--leading-snug);
     color: var(--color-text-secondary);
+    transition: opacity var(--duration-slow) var(--ease-out);
   }
+
+  /* Checking -> verdict sequence. Default (no JS, reduced motion) is the final state. */
+  .hero__checking { display: none; }
+  .hero__figure[data-state='checking'] .hero__checking { display: inline-flex; }
+  .hero__figure[data-state='checking'] .hero__verdict { display: none; }
+  .hero__figure[data-state='checking'] .hero__net {
+    border-color: var(--color-border-default);
+    background: var(--color-surface-card);
+  }
+  .hero__figure[data-state='checking'] .hero__why { opacity: 0; }
+  .hero__net { transition: border-color var(--duration-base) var(--ease-standard), background-color var(--duration-base) var(--ease-standard); transition-delay: calc(var(--i) * var(--stagger-step)); }
+  .hero__figure[data-state='done'] .hero__verdict { display: inline-flex; animation: hero-pop var(--duration-slow) var(--ease-out) both; animation-delay: calc(var(--i) * var(--stagger-step)); }
+  .hero__figure[data-state='done'] .hero__why { transition-delay: calc(4 * var(--stagger-step)); }
+  /* Replay only makes sense with JS and motion. */
+  .hero__replay { display: none; color: var(--color-text-secondary); }
+  :global(.js) .hero__replay { display: inline-flex; }
+  @media (prefers-reduced-motion: reduce) { :global(.js) .hero__replay { display: none; } }
+
+  @keyframes hero-pop {
+    from { opacity: 0; transform: translateY(var(--space-1)) scale(0.96); }
+    to { opacity: 1; transform: none; }
+  }
+
   @media (min-width: 56em) {
     .hero { padding-block: var(--space-20) var(--space-24); }
     .hero__inner { grid-template-columns: 7fr 5fr; gap: var(--space-16); }

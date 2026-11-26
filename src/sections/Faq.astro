@@ -1,12 +1,21 @@
 ---
 import Icon from '../components/Icon.astro';
+import { site } from '../config';
 import { url } from '../lib/url';
 
 const tech = url('technical/#enterprise');
+const techProofs = url('technical/#proofs');
+const techLimits = url('technical/#limits');
 
 const faqs: { q: string; a: string; tbc?: boolean }[] = [
   {
-    q: 'What does a network need to take part?',
+    q: 'Does it work everywhere?',
+    a: `
+      <p>Only where networks are registered. Everywhere else your phone shows <strong>Unverified</strong>: nothing to compare with, which is exactly where you are today. Unverified is not a warning.</p>
+      <p hidden>The more operators register, the more networks can show <strong>Verified</strong>. A <strong>Conflict</strong> needs no wide adoption at all: one registered network is enough for its impostors to be flagged.</p>`,
+  },
+  {
+    q: 'What does a WiFi network need to take part?',
     a: `
       <p>Two things, both done once by the operator:</p>
       <ul>
@@ -15,6 +24,27 @@ const faqs: { q: string; a: string; tbc?: boolean }[] = [
       </ul>
       <p>Enterprise networks such as eduroam should also accept GECKOGuard's shared onboarding login and give it a walled garden that reaches only GECKO. Universities publish a realm record, so their students are protected on other campuses too. <a href="${tech}">How that works, step by step</a>.</p>
       <p>Networks that don't take part keep working as before. Phones show them as <strong>Unverified</strong>.</p>`,
+  },
+  {
+    q: 'Who decides who may register a place?',
+    a: `
+      <p>A <strong>Geo CA</strong>: an authority that checks an operator really runs a network at an address before issuing its GeoCert, much like a certificate authority checks who owns a website. Organisations that already verify addresses could fill the role, such as a postal service or a business-listing provider like Google Business.</p>
+      <p hidden>Two rules keep it fair. A registration names a verified registrant (a domain such as <code>airport-wipkingen.com</code>) and a network name in an area belongs to one operator: a second operator can't register the same name on top.</p>
+      <p>This part is the proposed design and still an open question.</p>`,
+  },
+  {
+    q: 'Who runs the GECKO map and why trust it?',
+    a: `
+      <p>You don't have to trust whoever runs it, because your phone checks every answer instead. The map keeps all registrations in a tamper-evident structure, like a Certificate Transparency log and signs its current state. Each answer comes with a proof that it matches that signed state and is cryptographically complete.</p>
+      <p hidden>So the map can't hand your phone a registration that isn't in it, leave one out without the proof failing, or quietly rewrite its history. If something doesn't check out, the result is <strong>Conflict</strong>, never <strong>Verified</strong>.</p>
+      <p hidden>GECKO comes from the Network Security Group at ETH Zürich. The prototype runs its own map in the lab. <a href="${techProofs}">How the proofs work</a>.</p>`,
+  },
+  {
+    q: 'Is my location sent anywhere?',
+    a: `
+      <p>Only to the GECKO map and only roughly. To ask what is registered nearby, GECKOGuard sends the map cells covering an area around you (about ${site.lookupRadiusMeters}&nbsp;m in the prototype) and an altitude range. That is not an exact position and nothing else about you or your device is part of the request.</p>
+      <p>The map server can still tell roughly where the request came from, so who runs it matters for privacy. That is listed with the other <a href="${techLimits}">open points</a>.</p>`,
+    tbc: !site.lookupAnswerConfirmed,
   },
   {
     q: 'Why not just use eduroam CAT?',
@@ -48,7 +78,6 @@ const faqs: { q: string; a: string; tbc?: boolean }[] = [
           </h3>
           <div class="accordion__panel" id={`faq-${i}`} role="region" aria-labelledby={`faq-${i}-t`} hidden>
             <div class="faq__answer" set:html={f.a} />
-            {f.tbc && <p class="caption faq__tbc">TODO (CHECK)</p>}
           </div>
         </div>
       ))}

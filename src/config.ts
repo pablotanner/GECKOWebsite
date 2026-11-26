@@ -15,7 +15,6 @@ export const site = {
   geopkiUrl: 'https://github.com/netsec-ethz/geopki',
 
   // Shown in the FAQ ("Is my location sent anywhere?").
-  // TODO(author): confirm. The prototype's default query radius is 50 m.
   lookupRadiusMeters: 50,
   lookupAnswerConfirmed: false,
 };

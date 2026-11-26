@@ -2,12 +2,14 @@
 import Icon from '../components/Icon.astro';
 import VideoTabs from '../components/VideoTabs.astro';
 import { videos } from '../config';
+import { url } from '../lib/url';
 import type { IconName } from '../lib/icons';
 
 const helps: { icon: IconName; text: string }[] = [
-  { icon: 'server', text: 'It finds out which login server the network is registered to use, over a public, password-free onboarding login.' },
-  { icon: 'key', text: 'It sends your password only to that server, checked automatically.' },
-  { icon: 'ban', text: 'There is no "Trust" button for the user to tap by mistake or laziness.' },
+  { icon: 'server', text: 'Before your password is involved, it looks up which login server your university registered, over a public onboarding login that carries no secrets.' },
+  { icon: 'key', text: 'Your password goes into a profile that only accepts that server. An impostor’s server is refused by the phone itself.' },
+  { icon: 'ban', text: 'There is no “Trust” prompt, so there is nothing to tap by mistake or out of impatience.' },
+  { icon: 'reset', text: 'It happens once per account. After that, every connection is protected, on your own campus and on any other.' },
 ];
 ---
 <section class="section enterprise" id="enterprise" aria-labelledby="enterprise-title">
@@ -16,13 +18,12 @@ const helps: { icon: IconName; text: string }[] = [
       <h2 class="display-2" id="enterprise-title">It's worse for enterprise WiFi.</h2>
       <p class="lead">
         On eduroam and company networks, your phone sends your password to whichever server answers.
-        An impostor answers with its own certificate, and the phone shows a <q>Trust this certificate?</q> prompt. One tap, and the password is gone.
+        An impostor answers with its own certificate and the phone shows a <q>Trust this certificate?</q> prompt. One tap and the password is gone.
       </p>
       <p class="enterprise__context">
-        The videos show two ways it happens. Joining for the first time, a phone without a profile shows the same prompt
-        for the real network, so accepting it is what everyone does; Android even suggests <q>Trust on first use</q>.
-        Already connected, the impostor knocks the phone off the network, and when it reconnects the prompt looks innocent:
-        the user may feel required to trust it in order to get back online.
+        Even worse: that password is rarely just for WiFi, at many universities and companies it might be the same account as for email,
+        files and internal systems. The protection that exists today, installing your institution's profile before you
+        connect, is a step many people never take. <a href="#faq">More on that in the Q&amp;A</a>.
       </p>
       <div class="enterprise__helps">
         <p class="label">How GECKOGuard helps</p>
@@ -31,6 +32,7 @@ const helps: { icon: IconName; text: string }[] = [
             <li><Icon name={h.icon} /><span>{h.text}</span></li>
           ))}
         </ul>
+        <a class="enterprise__more" href={url('technical/#enterprise')}>See one login, message by message <Icon name="arrowRight" size="sm" /></a>
       </div>
     </div>
     <div class="enterprise__media">
@@ -61,6 +63,7 @@ const helps: { icon: IconName; text: string }[] = [
   .enterprise__grid { display: grid; gap: var(--space-12); }
   .enterprise__copy { display: grid; gap: var(--space-8); align-content: start; }
   .enterprise__helps { display: grid; gap: var(--space-4); }
+  .enterprise__more { display: inline-flex; align-items: center; gap: var(--space-1); justify-self: start; font-weight: var(--font-weight-medium); }
   .enterprise__context { max-width: var(--measure-lead); color: var(--color-text-secondary); margin-top: calc(-1 * var(--space-4)); }
   .enterprise__list { list-style: none; display: grid; }
   .enterprise__list li {

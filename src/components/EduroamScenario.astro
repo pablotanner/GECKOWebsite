@@ -1,0 +1,389 @@
+---
+// Worked example for the technical page: one eduroam login, message by message.
+// Values are illustrative but have the shape of what the prototype sends.
+// Variants: a value is either a string or { real, impostor }.
+import Icon from './Icon.astro';
+import Chip from './Chip.astro';
+
+type V = string | { real: string; impostor: string };
+interface Field { k: string; v: V; tag?: 'public' | 'secret'; diff?: boolean }
+interface Step { from: string; to: string; fields: Field[]; note: V }
+
+const SERVER = 'radius.uni-wipkingen.ch';
+const PIN = 'sha256/9F3A…C21E';
+const FAKE_PIN = 'sha256/E7D0…4B19';
+
+const today: Step[] = [
+  {
+    from: 'Phone', to: 'eduroam',
+    fields: [{ k: 'identity', v: 'anonymous@uni-wipkingen.ch', tag: 'public' }],
+    note: 'Pablo taps eduroam. The phone announces which university the account belongs to, so the network knows where to send the login.',
+  },
+  {
+    from: 'Login server', to: 'Phone',
+    fields: [
+      { k: 'certificate for', v: SERVER },
+      { k: 'issued by', v: 'Wipkingen Secure CA', diff: true },
+      { k: 'method offered', v: 'EAP-GTC', diff: true },
+    ],
+    note: 'An impostor answers with a certificate it made itself, under a convincing name. It also asks for EAP-GTC, a method that sends the password itself rather than a response computed from it (invisible downgrade attack). The phone has no way to judge the certificate, so it asks Pablo: "Trust this certificate?"',
+  },
+  {
+    from: 'Phone', to: 'Login server',
+    fields: [
+      { k: 'user', v: 'pablo', tag: 'secret' },
+      { k: 'password', v: 'Wipkingen2026!', tag: 'secret', diff: true },
+    ],
+    note: 'Pablo taps Trust. An iPhone without a pre-installed eduroam profile accepts and sends the password. The encrypted tunnel ends at the impostor, so it reads the password in plain text.',
+  },
+];
+
+const onboarding: Step[] = [
+  {
+    from: 'Phone', to: 'eduroam',
+    fields: [
+      { k: 'identity', v: 'onboard@gecko.org', tag: 'public' },
+      { k: 'password', v: 'gecko', tag: 'public' },
+    ],
+    note: 'GECKOGuard logs in with an onboarding account that is the same on every GECKO network and printed on this page. Nothing about Pablo is sent.',
+  },
+  {
+    from: 'eduroam', to: 'Phone',
+    fields: [
+      { k: 'access', v: 'walled garden' },
+      { k: 'reachable', v: { real: 'GECKO map only', impostor: 'whatever the attacker allows' } },
+      { k: 'time limit', v: '60 s' },
+    ],
+    note: { real: 'The network lets the phone reach the GECKO map and nothing else.', impostor: 'The impostor accepts the public login too. It costs it nothing.' },
+  },
+  {
+    from: 'Phone', to: 'GECKO map',
+    fields: [
+      { k: 'area', v: 'map cells around the library' },
+      { k: 'login record for', v: 'uni-wipkingen.ch' },
+    ],
+    note: 'GECKOGuard asks what is registered here and for the login record of Pablo\'s university.',
+  },
+  {
+    from: 'GECKO map', to: 'Phone',
+    fields: [
+      { k: 'network', v: 'eduroam at Wipkingen University' },
+      { k: 'login server', v: SERVER },
+      { k: 'CA key', v: PIN },
+      { k: 'method', v: 'PEAP with MSCHAPv2' },
+      { k: 'proof', v: 'valid' },
+    ],
+    note: {
+      real: 'The answer comes with a proof, so GECKOGuard can check it even though it came over this network.',
+      impostor: 'The impostor relays the genuine answer from the real map. It can, because the answer is public, and it can\'t alter it without breaking the proof.',
+    },
+  },
+];
+
+const login: Step[] = [
+  {
+    from: 'GECKOGuard', to: 'Phone\'s WiFi settings',
+    fields: [
+      { k: 'server name must be', v: SERVER },
+      { k: 'CA key must be', v: PIN },
+      { k: 'method must be', v: 'PEAP with MSCHAPv2' },
+      { k: 'user', v: 'pablo', tag: 'secret' },
+      { k: 'password', v: '••••••••', tag: 'secret' },
+    ],
+    note: 'Only now does GECKOGuard add Pablo\'s password, to a profile whose server name, CA key and method all come from the verified answer.',
+  },
+  {
+    from: 'Login server', to: 'Phone',
+    fields: [
+      { k: 'certificate for', v: SERVER },
+      { k: 'CA key', v: { real: PIN, impostor: FAKE_PIN }, diff: true },
+      { k: 'method offered', v: { real: 'PEAP with MSCHAPv2', impostor: 'EAP-GTC' }, diff: true },
+    ],
+    note: {
+      real: 'The key matches the registered one. The phone opens the encrypted tunnel and sends the password inside it.',
+      impostor: 'Neither the key nor the method matches the profile. The phone\'s WiFi stack ends the handshake on its own. The password is never sent and there is no prompt to tap.',
+    },
+  },
+];
+
+// Shown in the "see the records" panel. Same shapes as the prototype:
+// GeoCert per docs/geocert-schema.md, login record per app/src/main/proto/realm_record.proto.
+const geocertJson = `{
+  "version": 1,
+  "certificate_id": "wipkingen-university-eduroam-2026a",
+  "domain": "uni-wipkingen.ch",
+  "areas": [{ "type": "MultiPolygon",
+              "coordinates": [[[[8.5262, 47.3951], ...]], []] }],
+  "areas_altitude": [[400, 480]],
+  "not_valid_after": "2027-09-01T00:00:00Z",
+  "critical": ["wifi"],
+  "extensions": {
+    "wifi": {
+      "version": 1,
+      "operator": "Wipkingen University",
+      "ssid": "eduroam",
+      "auth_modes": ["wpa2-enterprise", "wpa3-enterprise"],
+      "enterprise": {
+        "federation": "eduroam",
+        "aaa": [{
+          "realms": ["uni-wipkingen.ch", "*.uni-wipkingen.ch"],
+          "eap_methods": [{ "method": "peap", "phase2": ["mschapv2"] }],
+          "servers": [{
+            "names": ["${SERVER}"],
+            "ca_spki_sha256": ["nzrB…whI="]
+          }]
+        }]
+      }
+    }
+  }
+}`;
+
+const realmRecord = `SignedRealmRecord
+  record:
+    realm            uni-wipkingen.ch
+    federation       eduroam
+    display_name     Uni Wipkingen
+    eap_method       PEAP
+    phase2           MSCHAPV2
+    outer_identity   anonymous@uni-wipkingen.ch
+    server_names     ${SERVER}
+    ca_der           <Uni Wipkingen Root CA, DER>
+    issued_at        2026-09-01
+    expires_at       2027-09-01
+  signature          ECDSA P-256 over the record bytes`;
+
+const isVariant = (v: V): v is { real: string; impostor: string } => typeof v !== 'string';
+---
+<div class="sc" data-mode="real">
+  <div class="sc__intro">
+    <span class="sc__avatar" aria-hidden="true"><Icon name="users" /></span>
+    <p>
+      <strong>Meet Pablo.</strong> Pablo started studying at Uni Wipkingen, with the account <code>pablo@uni-wipkingen.ch</code>.
+      On the first day, Pablo sits down in the university library and the phone shows <code>eduroam</code>.
+    </p>
+  </div>
+
+  <!-- Today -->
+  <section class="sc__block" aria-labelledby="sc-today">
+    <h3 class="title" id="sc-today">Today, without GECKOGuard, if an impostor is nearby</h3>
+    <ol class="sc__log">
+      {today.map((s, i) => (
+        <li class="sc__step">
+          <span class="sc__n">{i + 1}</span>
+          <p class="sc__route"><span>{s.from}</span><Icon name="arrowRight" size="sm" /><span>{s.to}</span></p>
+          <dl class="sc__msg">
+            {s.fields.map((f) => (
+              <div class:list={['sc__field', f.diff && 'sc__field--diff']}>
+                <dt>{f.k}</dt>
+                <dd>{f.v as string}{f.tag && <span class:list={['sc__tag', `sc__tag--${f.tag}`]}>{f.tag === 'secret' && <Icon name="lock" size="sm" />}{f.tag}</span>}</dd>
+              </div>
+            ))}
+          </dl>
+          <p class="sc__note">{s.note as string}</p>
+        </li>
+      ))}
+    </ol>
+    <p class="sc__outcome sc__outcome--bad"><Icon name="alert" />The attacker now has Pablo's password, in plain text.</p>
+  </section>
+
+  <!-- With GECKOGuard -->
+  <section class="sc__block" aria-labelledby="sc-with">
+    <div class="sc__head">
+      <h3 class="title" id="sc-with">With GECKOGuard</h3>
+      <div class="sc__toggle" role="group" aria-label="Which network Pablo's phone joined">
+        <button type="button" class="btn btn--sm btn--ghost" data-set="real" aria-pressed="true">Real network</button>
+        <button type="button" class="btn btn--sm btn--ghost" data-set="impostor" aria-pressed="false">Impostor</button>
+      </div>
+    </div>
+
+    {[
+      { title: 'Phase 1: onboarding, with nothing secret', steps: onboarding, offset: 0 },
+      { title: 'Phase 2: the real login, pinned', steps: login, offset: onboarding.length },
+    ].map((phase) => (
+      <div class="sc__phase">
+        <p class="label">{phase.title}</p>
+        <ol class="sc__log" start={phase.offset + 1}>
+          {phase.steps.map((s, i) => (
+            <li class="sc__step">
+              <span class="sc__n">{phase.offset + i + 1}</span>
+              <p class="sc__route"><span>{s.from}</span><Icon name="arrowRight" size="sm" /><span>{s.to}</span></p>
+              <dl class="sc__msg">
+                {s.fields.map((f) => (
+                  <div class:list={['sc__field', f.diff && isVariant(f.v) && 'sc__field--varies']}>
+                    <dt>{f.k}</dt>
+                    <dd>
+                      {isVariant(f.v)
+                        ? <><span data-show="real">{f.v.real}</span><span data-show="impostor">{f.v.impostor}</span></>
+                        : f.v}
+                      {f.diff && isVariant(f.v) && <span class="sc__tag sc__tag--mismatch" data-show="impostor"><Icon name="alert" size="sm" />no match</span>}
+                      {f.tag && <span class:list={['sc__tag', `sc__tag--${f.tag}`]}>{f.tag === 'secret' && <Icon name="lock" size="sm" />}{f.tag}</span>}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+              <p class="sc__note">
+                {isVariant(s.note)
+                  ? <><span data-show="real">{s.note.real}</span><span data-show="impostor">{s.note.impostor}</span></>
+                  : s.note}
+              </p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    ))}
+
+    <div class="sc__outcome" aria-live="polite">
+      <p data-show="real"><Chip verdict="verified" /> Connected. Pablo's password went only to <code>{SERVER}</code>.</p>
+      <p data-show="impostor"><Chip verdict="conflict" /> Stopped before the password. The server's CA key and method aren't the registered ones.</p>
+    </div>
+
+    <p class="sc__aside" data-show="impostor">
+      Other things the impostor could try in phase 1: block the map, and GECKOGuard has nothing verified, so it never
+      attempts the login (<strong>Unverified</strong>); or alter the answer, and the proof fails (<strong>Conflict</strong>).
+      Either way, no profile gets Pablo's password.
+    </p>
+
+    <details class="sc__details">
+      <summary><Icon name="file" size="sm" />See the GeoCert and login record behind this scenario</summary>
+      <div class="sc__docs">
+        <figure class="sc__doc">
+          <figcaption class="caption">Site GeoCert: eduroam at Wipkingen University, returned by the GECKO map in step 4</figcaption>
+          <pre tabindex="0" aria-label="Site GeoCert as JSON"><code>{geocertJson}</code></pre>
+        </figure>
+        <figure class="sc__doc">
+          <figcaption class="caption">Login record for <code>uni-wipkingen.ch</code>, also step 4 (sent as protobuf, decoded here)</figcaption>
+          <pre tabindex="0" aria-label="Login record, decoded"><code>{realmRecord}</code></pre>
+        </figure>
+        <p class="caption">
+          The GeoCert says a registered eduroam runs here and which servers its own users must reach. The login record
+          says how logins for one university work, wherever its students are. Hashes are base64 in the records; the steps
+          above show them shortened. In the prototype the login record is signed with a key pinned in the app. In a full
+          deployment it would sit in the GECKO map, with the same proofs as GeoCerts.
+        </p>
+      </div>
+    </details>
+  </section>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.sc').forEach((sc) => {
+    const buttons = sc.querySelectorAll<HTMLButtonElement>('[data-set]');
+    buttons.forEach((b) => b.addEventListener('click', () => {
+      sc.dataset.mode = b.dataset.set!;
+      buttons.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    }));
+  });
+</script>
+
+<style>
+  .sc { display: grid; gap: var(--space-10); }
+  .sc__intro {
+    display: grid; grid-template-columns: auto 1fr; gap: var(--space-4); align-items: start;
+    padding: var(--space-5);
+    border: var(--border-hairline) solid var(--color-border-default);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-card);
+    max-width: var(--measure-prose);
+  }
+  .sc__avatar {
+    display: grid; place-items: center;
+    width: var(--space-10); height: var(--space-10); border-radius: 50%;
+    background: var(--color-accent-subtle); color: var(--color-accent-default);
+  }
+  .sc__block { display: grid; gap: var(--space-5); }
+  .sc__head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3); }
+  .sc__toggle { display: none; gap: var(--space-1); padding: var(--space-1); border-radius: var(--radius-pill); background: var(--color-surface-sunken); }
+  :global(.js) .sc__toggle { display: inline-flex; }
+  .sc__phase { display: grid; gap: var(--space-3); }
+
+  .sc__log { list-style: none; display: grid; gap: var(--space-3); }
+  .sc__step {
+    display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--space-2) var(--space-4);
+    padding: var(--space-4);
+    border: var(--border-hairline) solid var(--color-border-default);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-card);
+  }
+  .sc__n {
+    grid-row: span 3;
+    display: grid; place-items: center;
+    width: var(--space-8); height: var(--space-8); border-radius: 50%;
+    border: var(--border-hairline) solid var(--color-border-strong);
+    font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-secondary);
+  }
+  .sc__route { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); font-size: var(--text-sm); font-weight: var(--font-weight-semibold); }
+  .sc__route :global(.icon) { color: var(--color-text-tertiary); }
+  .sc__msg {
+    display: grid; gap: var(--space-1);
+    padding: var(--space-3);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-sunken);
+    font-family: var(--font-mono); font-size: var(--text-xs);
+  }
+  .sc__field { display: grid; grid-template-columns: minmax(0, 11rem) minmax(0, 1fr); gap: var(--space-3); }
+  .sc__field dt { color: var(--color-text-tertiary); }
+  .sc__field dd { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); color: var(--color-text-primary); overflow-wrap: anywhere; }
+  .sc__field--diff dd { color: var(--color-verdict-conflict-fg); }
+  .sc[data-mode='impostor'] .sc__field--varies dd { color: var(--color-verdict-conflict-fg); }
+  .sc__note { grid-column: 2; font-size: var(--text-sm); color: var(--color-text-secondary); max-width: var(--measure-prose); }
+
+  .sc__tag {
+    display: inline-flex; align-items: center; gap: var(--space-1);
+    padding: 0 var(--space-2);
+    border-radius: var(--radius-pill);
+    font-family: var(--font-sans); font-size: var(--text-xs); font-weight: var(--font-weight-medium);
+    line-height: var(--leading-snug);
+  }
+  .sc__tag--public { color: var(--color-text-tertiary); border: var(--border-hairline) solid var(--color-border-default); }
+  .sc__tag--secret { color: var(--color-text-inverse); background: var(--color-surface-inverse); }
+  .sc__tag--mismatch { color: var(--color-verdict-conflict-fg); background: var(--color-verdict-conflict-bg); border: var(--border-hairline) solid var(--color-verdict-conflict-border); }
+  .sc__tag :global(.icon) { width: 0.9em; height: 0.9em; }
+
+  .sc__outcome { display: grid; gap: var(--space-2); font-weight: var(--font-weight-medium); }
+  .sc__outcome p { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+  .sc__outcome--bad { display: flex; align-items: center; gap: var(--space-2); color: var(--color-verdict-conflict-fg); }
+  .sc__aside { font-size: var(--text-sm); color: var(--color-text-secondary); max-width: var(--measure-prose); }
+
+  .sc__details {
+    border: var(--border-hairline) solid var(--color-border-default);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-card);
+  }
+  .sc__details summary {
+    display: flex; align-items: center; gap: var(--space-2);
+    min-height: var(--layout-tap-target);
+    padding: var(--space-3) var(--space-5);
+    cursor: pointer; list-style: none;
+    font-size: var(--text-sm); font-weight: var(--font-weight-medium); color: var(--color-text-link);
+    border-radius: var(--radius-lg);
+  }
+  .sc__details summary::-webkit-details-marker { display: none; }
+  .sc__details summary::after {
+    content: ""; margin-inline-start: auto;
+    width: var(--space-2); height: var(--space-2);
+    border-right: var(--border-thick) solid currentColor; border-bottom: var(--border-thick) solid currentColor;
+    transform: rotate(45deg);
+    transition: transform var(--duration-base) var(--ease-standard);
+  }
+  .sc__details[open] summary::after { transform: rotate(-135deg); }
+  .sc__details summary:hover { background: var(--color-action-secondary-hover); }
+  .sc__docs { display: grid; gap: var(--space-5); padding: var(--space-2) var(--space-5) var(--space-5); }
+  .sc__doc { display: grid; gap: var(--space-2); align-content: start; min-width: 0; margin: 0; }
+  .sc__doc pre {
+    margin: 0; padding: var(--space-4);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-sunken);
+    overflow-x: auto;
+    font-size: var(--text-xs); line-height: var(--leading-snug);
+  }
+  .sc__doc code { font-size: inherit; }
+
+  /* Variant switching. Without JS the real network is shown and the toggle is hidden. */
+  .sc[data-mode='real'] [data-show='impostor'],
+  .sc[data-mode='impostor'] [data-show='real'] { display: none; }
+
+  @media (max-width: 29.99em) {
+    .sc__field { grid-template-columns: minmax(0, 1fr); gap: 0; }
+    .sc__field + .sc__field { margin-top: var(--space-1); }
+  }
+</style>

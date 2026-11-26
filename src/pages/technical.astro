@@ -4,6 +4,7 @@ import Logo from '../components/Logo.astro';
 import Footer from '../components/Footer.astro';
 import Icon from '../components/Icon.astro';
 import Chip from '../components/Chip.astro';
+import EduroamScenario from '../components/EduroamScenario.astro';
 import { site } from '../config';
 import { url } from '../lib/url';
 
@@ -14,7 +15,7 @@ const toc = [
   { id: 'check', label: 'How a check works' },
   { id: 'proofs', label: 'Safe over a suspicious network' },
   { id: 'states', label: 'From result to verdict' },
-  { id: 'enterprise', label: 'Enterprise WiFi and eduroam' },
+  { id: 'enterprise', label: 'eduroam, step by step' },
   { id: 'rules', label: 'Rules that keep it strict' },
   //{ id: 'limits', label: 'Open points' },
 ];
@@ -182,39 +183,20 @@ const example = `{
 
         <!-- ============================================ Enterprise -->
         <section id="enterprise" aria-labelledby="enterprise-title">
-          <h2 class="title-lg" id="enterprise-title">Enterprise WiFi and eduroam</h2>
+          <h2 class="title-lg" id="enterprise-title">Enterprise WiFi and eduroam, step by step</h2>
           <p>
-            On enterprise networks the risk is the password itself. The phone sends it, protected by a TLS tunnel, to
-            whichever login server answers. Unless the phone knows which server to expect, an impostor's server works
-            just as well. Today that knowledge comes from a profile installed in advance (for eduroam, the CAT tool)
-            and most people never install one.
+            Enterprise WiFi networks, such as eduroam or a company's internal network, give each user their own credentials (username and password), so there is usually no captive portal or sign-in page.
+            On these networks, the phone sends the password itself, inside an
+            encrypted tunnel, to whichever login server answers. Two things make this hard to protect: the phone needs to
+            know in advance which server to expect, and there is no internet before the login succeeds, so it can't look
+            that up first. Here is one login, message by message (TODO: Make clear that this onboarding and profile installation is only required once per realm such as university login, once profile is installed any subsequent connections know what profile to expect and will reject impostors that use fake certificates).
           </p>
-          <p>There is also no internet before the login succeeds, so the phone can't simply look things up first. The prototype solves this with two sessions on the same network:</p>
-          <ol class="tech__phases">
-            <li>
-              <p class="title">1. Onboarding, with nothing secret</p>
-              <p>
-                The phone logs in with a public, shared onboarding identity. The usage of the public login, tells the network that this session is for onboarding and not a real user. 
-                The network puts it in a walled garden where only the GECKO map is reachable. It fetches the site's GeoCert and the record for the user's home
-                institution (which login servers, which CA, which method) and verifies both. If this session is
-                an impostor's, nothing is lost: the identity is public and the answers are protected by their proofs
-                and signatures.
-              </p>
-            </li>
-            <li>
-              <p class="title">2. The real login, pinned</p>
-              <p>
-                From the verified records, GECKOGuard builds the network profile with the server name + CA pinned and
-                only then adds the user's password. The phone's WiFi stack enforces the pins: if the server's certificate
-                doesn't match, the password is never sent. There is no "Trust this certificate?" prompt.
-              </p>
-            </li>
-          </ol>
+          <EduroamScenario />
           <p class="note"><Icon name="info" /><span>
-            The rule is enforced in code: credentials can only be attached to a profile whose pins come from a verified
-            record, through exactly one code path. Visitors in a federation like eduroam authenticate at their home
-            institution, which can't be registered at every site; for them GECKOGuard confirms the site and fetches the
-            home institution's record.
+            In this example, Pablo is at their home campus, <code>uni-wipkingen.ch</code>, so the GeoCert already contains the login server's name and key. If they were doing this "first connection" at a different campus (as a visitor), the login server information would have 
+            been fetched from the realm record server (TODO: link to information/limitations of the realm record server concept, also improve this text maybe) (also signed and pinned), during the onboarding walled garden.
+            In the prototype, the rule "a password only goes into a profile whose pins
+            came from a verified record" is enforced in code, through exactly one code path.
           </span></p>
         </section>
 
@@ -305,9 +287,6 @@ const example = `{
   .tech__cases { display: grid; gap: var(--space-4); }
   .tech__case { display: grid; gap: var(--space-2); justify-items: start; padding: var(--space-5); border: var(--border-hairline) solid var(--color-border-default); border-radius: var(--radius-lg); background: var(--color-surface-card); color: var(--color-text-secondary); }
 
-  .tech__phases { list-style: none; display: grid; gap: var(--space-4); max-width: var(--measure-prose); }
-  .tech__phases li { display: grid; gap: var(--space-2); padding: var(--space-5); border-radius: var(--radius-lg); background: var(--color-surface-sunken); color: var(--color-text-secondary); }
-  .tech__phases .title { color: var(--color-text-primary); }
 
   /* The flow is narrower here than on the home page, so it stays vertical longer. */
   @media (min-width: 48em) {

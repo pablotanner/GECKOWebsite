@@ -17,7 +17,7 @@ const networks: { ssid: string; verdict: Verdict }[] = [
       <h1 class="display-1" id="hero-title">Who is behind this network?</h1>
       <p class="lead">
         Anyone can name their WiFi <span class="mono">Wipkingen Airport Free</span>. GECKOGuard checks each network
-        against a public register of who is allowed to run which WiFi, where, and flags impostors before you type
+        against a public register of who is registered to run which WiFi, where and flags impostors before you type
         anything.
       </p>
       <div class="cluster">
@@ -32,7 +32,7 @@ const networks: { ssid: string; verdict: Verdict }[] = [
         <div class="phone__screen" aria-hidden="true">
           <div class="phone__status"><span>09:41</span><span>Wipkingen Airport</span></div>
           <div class="phone__header">
-            <p class="title">Networks</p>
+            <p class="title">Nearby WiFi Networks</p>
           </div>
           <div class="phone__body">
             {networks.map((n, i) => (

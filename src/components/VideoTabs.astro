@@ -1,0 +1,117 @@
+---
+// Several videos in one slot, switched with tabs (WAI-ARIA tabs pattern).
+// Without JS the tab bar is hidden and all videos are shown one after another.
+import VideoSlot from './VideoSlot.astro';
+import type { VideoConfig } from '../config';
+import type { Verdict } from '../lib/icons';
+
+interface Item {
+  id: string; label: string; detail: string; video: VideoConfig; verdict?: Verdict;
+  /** Why this case is shown on this device: a short question and its answer. */
+  why?: { q: string; a: string };
+}
+interface Props { label: string; items: Item[] }
+const { label, items } = Astro.props;
+---
+<div class="vtabs" data-vtabs>
+  <div class="vtabs__list" role="tablist" aria-label={label}>
+    {items.map((it, i) => (
+      <button
+        type="button"
+        class="vtabs__tab"
+        role="tab"
+        id={`${it.id}-tab`}
+        aria-controls={`${it.id}-panel`}
+        aria-selected={i === 0 ? 'true' : 'false'}
+        tabindex={i === 0 ? 0 : -1}
+      >
+        <span class="vtabs__label">{it.label}</span>
+        <span class="vtabs__detail">{it.detail}</span>
+      </button>
+    ))}
+  </div>
+  {items.map((it, i) => (
+    <div class="vtabs__panel" role="tabpanel" id={`${it.id}-panel`} aria-labelledby={`${it.id}-tab`} data-initial-hidden={i !== 0 ? '' : undefined}>
+      <VideoSlot id={it.id} video={it.video} verdict={it.verdict} />
+      {it.why && <p class="vtabs__why"><strong>{it.why.q}</strong> {it.why.a}</p>}
+    </div>
+  ))}
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-vtabs]').forEach((root) => {
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+    const panels = tabs.map((t) => document.getElementById(t.getAttribute('aria-controls')!)!);
+
+    const select = (i: number, focus = false) => {
+      tabs.forEach((t, j) => {
+        const on = i === j;
+        t.setAttribute('aria-selected', String(on));
+        t.tabIndex = on ? 0 : -1;
+        panels[j].hidden = !on;
+        if (!on) panels[j].querySelectorAll('video').forEach((v) => v.pause());
+      });
+      if (focus) tabs[i].focus();
+    };
+
+    panels.forEach((p) => {
+      if (p.hasAttribute('data-initial-hidden')) p.hidden = true;
+      p.removeAttribute('data-initial-hidden');
+    });
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => select(i));
+      t.addEventListener('keydown', (e) => {
+        const n = tabs.length;
+        const to = { ArrowRight: (i + 1) % n, ArrowLeft: (i - 1 + n) % n, Home: 0, End: n - 1 }[e.key];
+        if (to === undefined) return;
+        e.preventDefault();
+        select(to, true);
+      });
+    });
+  });
+</script>
+
+<style>
+  .vtabs { display: grid; gap: var(--space-4); }
+  .vtabs__list {
+    display: none;
+    grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+    gap: var(--space-1);
+    padding: var(--space-1);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-sunken);
+  }
+  :global(.js) .vtabs__list { display: grid; }
+  .vtabs__tab {
+    display: grid; gap: 0; justify-items: start; text-align: start;
+    min-height: var(--layout-tap-target);
+    padding: var(--space-2) var(--space-3);
+    border: var(--border-hairline) solid transparent;
+    border-radius: var(--radius-md);
+    background: none;
+    cursor: pointer;
+    transition: background-color var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard);
+  }
+  .vtabs__tab:hover { background: var(--color-action-secondary-hover); }
+  .vtabs__tab[aria-selected='true'] {
+    background: var(--color-surface-card);
+    border-color: var(--color-border-default);
+    box-shadow: var(--shadow-raised);
+  }
+  .vtabs__label { font-size: var(--text-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); }
+  .vtabs__detail { font-size: var(--text-xs); color: var(--color-text-tertiary); }
+  .vtabs__panel { display: grid; gap: var(--space-4); }
+  .vtabs__panel[hidden] { display: none; }
+  .vtabs__why {
+    width: min(100%, 22rem); margin-inline: auto;
+    padding-top: var(--space-4);
+    border-top: var(--border-hairline) solid var(--color-border-default);
+    font-size: var(--text-sm); line-height: var(--leading-snug); color: var(--color-text-secondary);
+  }
+  .vtabs__why strong { color: var(--color-text-primary); font-weight: var(--font-weight-semibold); }
+  /* Hidden from first paint when JS runs, so the second video never flashes. */
+  :global(.js) .vtabs__panel[data-initial-hidden] { display: none; }
+  /* Without JS every panel shows, with some air between them. */
+  .vtabs__panel + .vtabs__panel { margin-top: var(--space-6); }
+  :global(.js) .vtabs__panel + .vtabs__panel { margin-top: 0; }
+</style>

@@ -1,6 +1,6 @@
 ---
 import Icon from '../components/Icon.astro';
-import VideoSlot from '../components/VideoSlot.astro';
+import VideoTabs from '../components/VideoTabs.astro';
 import { videos } from '../config';
 import type { IconName } from '../lib/icons';
 
@@ -19,9 +19,10 @@ const helps: { icon: IconName; text: string }[] = [
         An impostor answers with its own certificate, and the phone shows a <q>Trust this certificate?</q> prompt. One tap, and the password is gone.
       </p>
       <p class="enterprise__context">
-        The video shows the sneaky and most illustrative version: the iPhone was already connected. The impostor knocks it off the network
-        and when the phone reconnects, the prompt looks innocent and the user might feel required to trust it, in order to get back online. A first connection is even easier to
-        attack: a phone without a profile shows the same prompt for the real network, so accepting it is what everyone does.
+        The videos show two ways it happens. Joining for the first time, a phone without a profile shows the same prompt
+        for the real network, so accepting it is what everyone does; Android even suggests <q>Trust on first use</q>.
+        Already connected, the impostor knocks the phone off the network, and when it reconnects the prompt looks innocent:
+        the user may feel required to trust it in order to get back online.
       </p>
       <div class="enterprise__helps">
         <p class="label">How GECKOGuard helps</p>
@@ -33,7 +34,25 @@ const helps: { icon: IconName; text: string }[] = [
       </div>
     </div>
     <div class="enterprise__media">
-      <VideoSlot id="video-eduroam" video={videos.eduroam} />
+      <VideoTabs
+        label="Attack videos"
+        items={[
+          {
+            id: 'video-eduroam-android', label: 'First connection', detail: 'Android tablet', video: videos.eduroamAndroid,
+            why: {
+              q: 'Why a first connection?',
+              a: 'It is the most vulnerable moment on any device, Android or iPhone: there is no profile yet to compare the server\'s certificate with, so the device has to ask.',
+            },
+          },
+          {
+            id: 'video-eduroam', label: 'Reconnecting', detail: 'iPhone', video: videos.eduroam,
+            why: {
+              q: 'Why an iPhone?',
+              a: 'Reconnecting attacks are most exposed on iOS: one prompt, one tap. On Android the user has to manually select “Trust on first use”, as well as the security type for downgrade attacks, again; there is no automatic prompt like on iOS. However, if an impatient user decides to tap on “Forget network”, it will take them back to the vulnerable first connection scenario.',
+            },
+          },
+        ]}
+      />
     </div>
   </div>
 </section>

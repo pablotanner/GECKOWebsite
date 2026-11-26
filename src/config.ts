@@ -57,12 +57,24 @@ export const videos = {
     src: 'assets/video/eduroam-ios.mp4',
     poster: 'assets/video/eduroam-ios.jpg',
     captions: 'assets/video/eduroam-ios.vtt',
-    title: 'The trust prompt on an iPhone',
+    title: 'iPhone, already connected',
     steps: [
       { time: '0:00', text: 'Connected to eduroam-lab.' },
       { time: '0:05', text: 'The connection drops (e.g. due to jamming): an impostor takes over' },
       { time: '0:16', text: 'User is asked to accept the new certificate' },
       { time: '0:18', text: 'User taps "Accept" and their plaintext credentials are sent to the attacker' },
+    ],
+  },
+  eduroamAndroid: {
+    src: 'assets/video/eduroam-firstConnection-android.mp4',
+    poster: 'assets/video/eduroam-firstConnection-android.jpg',
+    captions: 'assets/video/eduroam-firstConnection-android.vtt',
+    title: 'Android tablet, joining for the first time',
+    steps: [
+      { time: '0:01', text: 'Taps eduroam-lab, types username and password' },
+      { time: '0:10', text: 'No profile, so "Trust on first use" is the obvious choice' },
+      { time: '0:15', text: 'The certificate is issued by "Rogue CA". One tap on Trust' },
+      { time: '0:17', text: 'The connection fails, but the password is already gone' },
     ],
   },
 } satisfies Record<string, VideoConfig>;

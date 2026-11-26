@@ -1,0 +1,19 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:02.000
+The tablet's WiFi list. Tap on eduroam-lab.
+
+00:00:02.000 --> 00:00:10.000
+Username and password: pablo@uni-wipkingen.ch.
+
+00:00:10.000 --> 00:00:12.000
+Android asks for a CA certificate. With no profile installed, "Trust on first use" is the obvious choice.
+
+00:00:12.000 --> 00:00:15.500
+Connect.
+
+00:00:15.500 --> 00:00:16.500
+The impostor's certificate: issuer "Rogue CA". One tap on Trust.
+
+00:00:16.500 --> 00:00:25.000
+The connection fails, but the password has already gone to the impostor.

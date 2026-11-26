@@ -561,7 +561,7 @@ a:hover { color: var(--color-accent-hover); text-decoration-thickness: var(--bor
   overflow: hidden; position: relative;
   background: var(--color-surface-sunken);
 }
-.video__frame video { width: 100%; height: 100%; object-fit: cover; }
+.video__frame video { width: 100%; height: 100%; object-fit: contain; } /* show the whole recording, whatever its shape */
 .video__placeholder {
   position: absolute; inset: 0;
   display: grid; place-content: center; justify-items: center; gap: var(--space-3);

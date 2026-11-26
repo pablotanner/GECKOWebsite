@@ -54,7 +54,7 @@ export const videos = {
     ],
   },
   eduroam: {
-    src: 'assets/video/eduroam-ios.mp4',
+    src: 'assets/video/eduroam-ios.mov',
     poster: 'assets/video/eduroam-ios.jpg',
     captions: 'assets/video/eduroam-ios.vtt',
     title: 'The trust prompt on an iPhone',
@@ -69,9 +69,9 @@ export const videos = {
 export const nav = [
   { id: 'problem', label: 'Problem' },
   { id: 'demo', label: 'Demo' },
-  { id: 'how-it-works', label: 'How it works' },
+  { id: 'how-it-works', label: 'The Solution' },
   { id: 'try-it', label: 'Try it' },
-  { id: 'enterprise', label: 'Enterprise' },
+  { id: 'enterprise', label: 'Enterprise WiFi' },
   { id: 'who', label: "Who it's for" },
-  { id: 'faq', label: 'FAQ' },
+  { id: 'faq', label: 'Q & A' },
 ] as const;

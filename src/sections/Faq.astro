@@ -1,6 +1,7 @@
 ---
 import Icon from '../components/Icon.astro';
 import { site } from '../config';
+import { url } from '../lib/url';
 
 const faqs: { q: string; a: string; tbc?: boolean }[] = [
   {
@@ -12,8 +13,9 @@ const faqs: { q: string; a: string; tbc?: boolean }[] = [
 <section class="section" id="faq" aria-labelledby="faq-title">
   <div class="container faq__grid">
     <header class="faq__head">
-      <h2 class="display-2" id="faq-title">Questions and limitations</h2>
-      <p class="lead">TODO</p>
+      <h2 class="display-2" id="faq-title">Questions and Answers</h2>
+      <p class="lead">Additional information about GECKOGuard</p>
+      <!-- <p><a href={url('technical/')}>For the curious: how it works in detail</a></p> -->
     </header>
     <div class="accordion">
       {faqs.map((f, i) => (

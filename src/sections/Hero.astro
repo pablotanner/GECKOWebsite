@@ -1,6 +1,7 @@
 ---
 import Icon from '../components/Icon.astro';
 import Chip from '../components/Chip.astro';
+import { url } from '../lib/url';
 import type { Verdict } from '../lib/icons';
 
 const networks: { ssid: string; verdict: Verdict }[] = [
@@ -22,6 +23,7 @@ const networks: { ssid: string; verdict: Verdict }[] = [
       <div class="cluster">
         <a class="btn btn--primary" href="#problem">Spot the fake <Icon name="arrowDown" size="sm" /></a>
         <a class="btn btn--secondary" href="#demo">See the attack</a>
+        <a href={url('technical/')} class="btn btn--tertiary"> Technical Details</a>
       </div>
     </div>
 

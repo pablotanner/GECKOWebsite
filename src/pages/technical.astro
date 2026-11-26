@@ -1,0 +1,330 @@
+---
+import Base from '../layouts/Base.astro';
+import Logo from '../components/Logo.astro';
+import Footer from '../components/Footer.astro';
+import Icon from '../components/Icon.astro';
+import Chip from '../components/Chip.astro';
+import { site } from '../config';
+import { url } from '../lib/url';
+
+const home = url('');
+
+const toc = [
+  { id: 'geocert', label: 'What a GeoCert says' },
+  { id: 'check', label: 'How a check works' },
+  { id: 'proofs', label: 'Safe over a suspicious network' },
+  { id: 'states', label: 'From result to verdict' },
+  { id: 'enterprise', label: 'Enterprise WiFi and eduroam' },
+  { id: 'rules', label: 'Rules that keep it strict' },
+  //{ id: 'limits', label: 'Open points' },
+];
+
+// Fictional example, same shape as the prototype's certificates (docs/geocert-schema.md in the app repository).
+const example = `{
+  "version": 1,
+  "certificate_id": "wipkingen-airport-free-2026a",
+  "domain": "airport-wipkingen.com",
+  "areas": [{ "type": "MultiPolygon",
+              "coordinates": [[[[8.5291, 47.3934], ...]], []] }],
+  "areas_altitude": [[380, 460]],
+  "not_valid_after": "2027-11-01T00:00:00Z",
+  "critical": ["wifi"],
+  "extensions": {
+    "wifi": {
+      "version": 1,
+      "operator": "Airport Wipkingen",
+      "ssid": "Wipkingen Airport Free",
+      "auth_modes": ["open"],
+      "portal": {
+        "domains": [
+          { "name": "login.airport-wipkingen.com", "role": "primary",
+            "pinned_spki_sha256": ["<base64 key hash>"] },
+          { "name": "pay.airport-wipkingen.com", "role": "delegate",
+            "pinned_spki_sha256": ["<base64 key hash>"] }
+        ]
+      }
+    }
+  }
+}`;
+---
+<Base title="For the curious: how GECKOGuard works" description="The technical details behind GECKOGuard: GeoCerts, proofs, verdicts and eduroam onboarding.">
+  <header class="nav" data-scrolled="true">
+    <div class="container nav__inner">
+      <Logo href={home} label="GECKOGuard, home" />
+      <a class="btn btn--ghost btn--sm" href={home}><Icon name="arrowRight" size="sm" class="tech__back-icon" />Back to the overview</a>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="tech__hero survey-grid" aria-labelledby="tech-title">
+      <div class="container tech__hero-inner">
+        <p class="coord">Technical Details</p>
+        <h1 class="display-2" id="tech-title">What happens under the hood</h1>
+        <p class="lead">
+          This page provides the technical details about what a registration contains, how the phone
+          checks a network and why the answer can be trusted even when it arrives over the network being checked.
+        </p>
+      </div>
+    </section>
+
+    <div class="container tech">
+      <nav class="tech__toc" aria-label="On this page">
+        <p class="label">On this page</p>
+        <ol>
+          {toc.map((t) => <li><a href={`#${t.id}`} data-toc={t.id}>{t.label}</a></li>)}
+        </ol>
+      </nav>
+
+      <article class="tech__body">
+        <!-- ============================================ GeoCert -->
+        <section id="geocert" aria-labelledby="geocert-title">
+          <h2 class="title-lg" id="geocert-title">What a GeoCert says</h2>
+          <p>
+            A GeoCert is a signed statement: <em>this operator runs this network, with these properties, in this area</em>.
+            GECKO's certificate format is generic. A core binds a verified domain to areas on the map, and named
+            extensions say what kind of thing is registered. A WiFi network is the <code>wifi</code> extension. The concept of extensions follows the X.509 model: a client that doesn't understand an extension ignores it, unless the certificate marks it critical.
+          </p>
+
+          <div class="tech__split">
+            <article class="geocert" aria-label="Example GeoCert, summarised">
+              <div class="geocert__head">
+                <span class="geocert__kind"><Icon name="shield" class="geocert__seal" />GeoCert</span>
+                <span class="coord">example</span>
+              </div>
+              <div class="geocert__area survey-grid"><div class="geocert__parcel hatch"></div></div>
+              <hr class="geocert__rule" />
+              <dl class="geocert__fields">
+                <dt>Registrant</dt><dd>airport-wipkingen.com</dd>
+                <dt>Network</dt><dd>Wipkingen Airport Free</dd>
+                <dt>Security</dt><dd>open + sign-in page</dd>
+                <dt>Sign-in page</dt><dd>login.airport-wipkingen.com</dd>
+                <dt>Valid until</dt><dd>2027-11-01</dd>
+              </dl>
+            </article>
+            <figure class="tech__code">
+              <figcaption class="caption">The same certificate as stored in the map (shortened)</figcaption>
+              <pre tabindex="0" aria-label="Example GeoCert as JSON"><code>{example}</code></pre>
+            </figure>
+          </div>
+
+          <table class="spec">
+            <caption class="visually-hidden">GeoCert fields</caption>
+            <thead><tr><th scope="col">Field</th><th scope="col">What it means</th></tr></thead>
+            <tbody>
+              <tr><td><code>domain</code></td><td>The registrant, a domain the Geo CA verified. Certificates with the same domain belong to one operator.</td></tr>
+              <tr><td><code>areas</code>, <code>areas_altitude</code></td><td>Where the claim holds: polygons on the map, plus a height range in metres.</td></tr>
+              <tr><td><code>not_valid_after</code></td><td>Expiry. Keys are rotated by registering a new certificate before the old one expires.</td></tr>
+              <tr><td><code>critical</code></td><td>Extensions a client must understand to judge the certificate. A client that doesn't understand one never says Verified or Conflict from it.</td></tr>
+              <tr><td><code>wifi.ssid</code></td><td>The network name, compared case-insensitively. By default the name is exclusive here: another network using it is a Conflict.</td></tr>
+              <tr><td><code>wifi.ssid_shared</code></td><td>Set for generic names that several operators legitimately share in one area.</td></tr>
+              <tr><td><code>wifi.auth_modes</code></td><td>Every security mode the network offers (<code>open</code>, <code>wpa2-personal</code>, <code>wpa3-enterprise</code>, ...). A network offering weaker security than registered is a Conflict.</td></tr>
+              <tr><td><code>wifi.portal.domains</code></td><td>Every sign-in page domain, with its role (<code>primary</code> entry point, <code>delegate</code> such as a payment page, <code>api</code>) and the hash of its key. The key pins are the trust anchor; a domain without pins never verifies.</td></tr>
+              <tr><td><code>wifi.enterprise</code></td><td>For company and eduroam networks: the federation, the realms of local users, and the login (RADIUS) servers by name and key or CA pin.</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- ============================================ Check -->
+        <section id="check" aria-labelledby="check-title">
+          <h2 class="title-lg" id="check-title">How a check works</h2>
+          <ol class="flow tech__flow">
+            <li class="flow__step"><span class="flow__node"><Icon name="wifi" /></span><span class="flow__num">Join</span><h3 class="flow__title">Join the exact access point</h3><p class="flow__text">GECKOGuard joins the network itself, pinned to the access point's hardware address, so it checks the one you would use.</p></li>
+            <li class="flow__step"><span class="flow__node"><Icon name="lock" /></span><span class="flow__num">Observe</span><h3 class="flow__title">Record what it presents</h3><p class="flow__text">It follows the sign-in page redirects and records the key of every HTTPS page on the way, plus the security modes the access point advertises.</p></li>
+            <li class="flow__step"><span class="flow__node"><Icon name="search" /></span><span class="flow__num">Look up</span><h3 class="flow__title">Ask the map</h3><p class="flow__text">It asks the GECKO map which certificates cover its location and checks the answer's signature and proofs.</p></li>
+            <li class="flow__step"><span class="flow__node"><Icon name="scale" /></span><span class="flow__num">Compare</span><h3 class="flow__title">Compare</h3><p class="flow__text">Certificates for the network's name are compared with what was observed: domains, their roles and their pinned keys.</p></li>
+          </ol>
+          <p class="note"><Icon name="info" /><span>
+            The lookup sends the map cells covering an area around the device (e.g. {site.lookupRadiusMeters}&nbsp;m) and an altitude range, never an exact position.
+          </span></p>
+        </section>
+
+        <!-- ============================================ Proofs -->
+        <section id="proofs" aria-labelledby="proofs-title">
+          <h2 class="title-lg" id="proofs-title">Safe to fetch over a suspicious network</h2>
+          <p>
+            The phone often has to ask the map <em>through</em> the network it is checking, which might be the
+            attacker's. That's fine, because the answer protects itself rather than relying on the connection:
+          </p>
+          <ul class="tech__list">
+            <li><strong>Signed map head.</strong> The map keeps every certificate in a Merkle tree, like a Certificate Transparency log. Its current state (the tree's root) is signed with a key the app has pinned.</li>
+            <li><strong>Inclusion proofs.</strong> Each certificate in an answer comes with a proof that it is in that signed tree. An attacker can't add a fake registration or alter a real one without the proof failing.</li>
+            <li><strong>Consistency proofs.</strong> The tree only grows. A proof that the new head extends the previous one stops the map from quietly rewriting history.</li>
+          </ul>
+          <p>So an attacker in the middle has two options, and neither gives it Verified:</p>
+          <div class="tech__cases">
+            <div class="tech__case"><p class="title">Block the lookup</p><p>No answer, nothing to compare.</p><Chip verdict="unverified" /></div>
+            <div class="tech__case"><p class="title">Forge or alter the answer</p><p>The proof or signature doesn't check out.</p><Chip verdict="conflict" /></div>
+          </div>
+          <p class="caption" hidden>
+            Replaying an old but genuine answer is the remaining gap. See <a href="#limits">open points</a>.
+          </p>
+        </section>
+
+        <!-- ============================================ States -->
+        <section id="states" aria-labelledby="states-title">
+          <h2 class="title-lg" id="states-title">From result to verdict</h2>
+          <p>
+            The prototype distinguishes more cases internally than the three verdicts on the main page. Only Conflict
+            is meant to warn: most networks won't be registered, and warning about those would just be noise.
+          </p>
+          <table class="spec">
+            <caption class="visually-hidden">Prototype states and how they are shown</caption>
+            <thead><tr><th scope="col">Prototype state</th><th scope="col">When</th><th scope="col">Shown as</th></tr></thead>
+            <tbody>
+              <tr><td><code>VERIFIED</code></td><td>The network presented what is registered for it here.</td><td><Chip verdict="verified" /></td></tr>
+              <tr><td><code>CONFLICT</code></td><td>Something is registered for this name here, but the network presented something else, or the map's proof failed.</td><td><Chip verdict="conflict" /></td></tr>
+              <tr><td><code>UNRECOGNIZED</code></td><td>Certificates exist here, but none matches the presented domain. On an exclusive name this becomes a Conflict.</td><td><Chip verdict="conflict" /> or <Chip verdict="unverified" /></td></tr>
+              <tr><td><code>UNVERIFIED</code></td><td>Nothing is registered for this network at this location.</td><td><Chip verdict="unverified" /></td></tr>
+              <tr><td><code>UNREACHABLE</code></td><td>The map couldn't be reached.</td><td><Chip verdict="unverified" /></td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- ============================================ Enterprise -->
+        <section id="enterprise" aria-labelledby="enterprise-title">
+          <h2 class="title-lg" id="enterprise-title">Enterprise WiFi and eduroam</h2>
+          <p>
+            On enterprise networks the risk is the password itself. The phone sends it, protected by a TLS tunnel, to
+            whichever login server answers. Unless the phone knows which server to expect, an impostor's server works
+            just as well. Today that knowledge comes from a profile installed in advance (for eduroam, the CAT tool)
+            and most people never install one.
+          </p>
+          <p>There is also no internet before the login succeeds, so the phone can't simply look things up first. The prototype solves this with two sessions on the same network:</p>
+          <ol class="tech__phases">
+            <li>
+              <p class="title">1. Onboarding, with nothing secret</p>
+              <p>
+                The phone logs in with a public, shared onboarding identity. The usage of the public login, tells the network that this session is for onboarding and not a real user. 
+                The network puts it in a walled garden where only the GECKO map is reachable. It fetches the site's GeoCert and the record for the user's home
+                institution (which login servers, which CA, which method) and verifies both. If this session is
+                an impostor's, nothing is lost: the identity is public and the answers are protected by their proofs
+                and signatures.
+              </p>
+            </li>
+            <li>
+              <p class="title">2. The real login, pinned</p>
+              <p>
+                From the verified records, GECKOGuard builds the network profile with the server name + CA pinned and
+                only then adds the user's password. The phone's WiFi stack enforces the pins: if the server's certificate
+                doesn't match, the password is never sent. There is no "Trust this certificate?" prompt.
+              </p>
+            </li>
+          </ol>
+          <p class="note"><Icon name="info" /><span>
+            The rule is enforced in code: credentials can only be attached to a profile whose pins come from a verified
+            record, through exactly one code path. Visitors in a federation like eduroam authenticate at their home
+            institution, which can't be registered at every site; for them GECKOGuard confirms the site and fetches the
+            home institution's record.
+          </span></p>
+        </section>
+
+        <!-- ============================================ Rules -->
+        <section id="rules" aria-labelledby="rules-title">
+          <h2 class="title-lg" id="rules-title">Rules that keep it strict</h2>
+          <p>The format is designed so that anything unexpected fails safe, never towards Verified:</p>
+          <ul class="tech__list">
+            <li><strong>Unknown fields are ignored</strong>, unless the certificate marks them critical. Then the certificate can't verify anything.</li>
+            <li><strong>Unknown values never match.</strong> A security mode or portal role the client doesn't know is treated as different from everything observed.</li>
+            <li><strong>Missing means strict.</strong> Every yes/no field defaults to the stricter reading, so leaving a field out never weakens a check.</li>
+            <li><strong>Pins, not the Web PKI.</strong> A sign-in page is trusted because its key is registered, not because some certificate authority signed it.</li>
+            <li><strong>The algorithm is in the name.</strong> Hashes are fields like <code>pinned_spki_sha256</code>; a pin in an algorithm the client doesn't know counts as no pin.</li>
+          </ul>
+        </section>
+
+        <!-- ============================================ Limits -->
+        <section id="limits" aria-labelledby="limits-title" style={{display: 'none'}}>
+          <h2 class="title-lg" id="limits-title">Open points</h2>
+          <ul class="tech__list">
+            <li><strong>Freshness.</strong> An attacker could replay an old but genuinely signed answer. How the phone learns that a map head is recent is not solved yet.</li>
+            <li><strong>System privileges.</strong> The design assumes the check is part of the phone's WiFi manager. The test tablet can't be rooted, so the prototype runs on public Android APIs, which costs some extra approval dialogs. That is a prototype artifact, not a design limit.</li>
+            <li><strong>Name exclusivity on the server.</strong> The map should refuse a second operator registering the same name in an overlapping area. The client already assumes this; the server check isn't implemented yet.</li>
+            <li><strong>Registered but misbehaving operators</strong> are out of scope. GECKO checks who may run a network at a place, not how they behave.</li>
+          </ul>
+        </section>
+      </article>
+    </div>
+  </main>
+  <Footer />
+</Base>
+
+<script>
+  // Highlight the section in view in the table of contents.
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-toc]')];
+  const io = new IntersectionObserver(
+    (entries) => entries.forEach((e) => {
+      if (!e.isIntersecting) return;
+      links.forEach((l) => (l.dataset.toc === e.target.id ? l.setAttribute('aria-current', 'true') : l.removeAttribute('aria-current')));
+    }),
+    { rootMargin: '-30% 0px -60% 0px' },
+  );
+  links.forEach((l) => { const s = document.getElementById(l.dataset.toc!); if (s) io.observe(s); });
+</script>
+
+<style>
+  .tech__back-icon { transform: rotate(180deg); }
+  .tech__hero { border-bottom: var(--border-hairline) solid var(--color-border-default); padding-block: var(--space-12) var(--space-16); }
+  .tech__hero-inner { display: grid; gap: var(--space-4); }
+
+  .tech { display: grid; gap: var(--space-10); padding-block: var(--space-12) var(--space-20); }
+  .tech__toc { display: grid; gap: var(--space-3); align-content: start; }
+  .tech__toc ol { list-style: none; display: grid; gap: var(--space-1); }
+  .tech__toc a {
+    display: block; padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-sm);
+    color: var(--color-text-secondary); text-decoration: none; font-size: var(--text-sm);
+  }
+  .tech__toc a:hover { background: var(--color-action-secondary-hover); color: var(--color-text-primary); }
+  .tech__toc a[aria-current='true'] { background: var(--color-surface-sunken); color: var(--color-text-primary); font-weight: var(--font-weight-medium); }
+
+  .tech__body { display: grid; gap: var(--space-16); min-width: 0; }
+  .tech__body section { display: grid; gap: var(--space-5); align-content: start; }
+  .tech__body section > p { max-width: var(--measure-prose); color: var(--color-text-secondary); }
+  .tech__body h2 { font-size: var(--text-title-lg); }
+
+  .tech__split { display: grid; gap: var(--space-6); align-items: start; }
+  .tech__code { display: grid; gap: var(--space-2); min-width: 0; }
+  .tech__code pre {
+    margin: 0; padding: var(--space-5);
+    border-radius: var(--radius-lg);
+    border: var(--border-hairline) solid var(--color-border-default);
+    background: var(--color-surface-card);
+    overflow-x: auto;
+    font-size: var(--text-xs); line-height: var(--leading-snug);
+  }
+  .tech__code code { font-size: inherit; }
+
+  .spec { width: 100%; border-collapse: collapse; font-size: var(--text-sm); }
+  .spec th { text-align: start; font-weight: var(--font-weight-medium); color: var(--color-text-tertiary); padding: var(--space-2) var(--space-3) var(--space-2) 0; border-bottom: var(--border-hairline) solid var(--color-border-strong); }
+  .spec td { vertical-align: top; padding: var(--space-3) var(--space-3) var(--space-3) 0; border-bottom: var(--border-hairline) solid var(--color-border-default); color: var(--color-text-secondary); }
+  .spec td:first-child { white-space: nowrap; color: var(--color-text-primary); }
+  .spec td :global(.chip) { margin-block: var(--space-1); }
+
+  .tech__list { display: grid; gap: var(--space-3); padding-inline-start: var(--space-5); max-width: var(--measure-prose); color: var(--color-text-secondary); }
+  .tech__list strong { color: var(--color-text-primary); font-weight: var(--font-weight-semibold); }
+
+  .tech__cases { display: grid; gap: var(--space-4); }
+  .tech__case { display: grid; gap: var(--space-2); justify-items: start; padding: var(--space-5); border: var(--border-hairline) solid var(--color-border-default); border-radius: var(--radius-lg); background: var(--color-surface-card); color: var(--color-text-secondary); }
+
+  .tech__phases { list-style: none; display: grid; gap: var(--space-4); max-width: var(--measure-prose); }
+  .tech__phases li { display: grid; gap: var(--space-2); padding: var(--space-5); border-radius: var(--radius-lg); background: var(--color-surface-sunken); color: var(--color-text-secondary); }
+  .tech__phases .title { color: var(--color-text-primary); }
+
+  /* The flow is narrower here than on the home page, so it stays vertical longer. */
+  @media (min-width: 48em) {
+    .tech__cases { grid-template-columns: 1fr 1fr; }
+    .tech__flow { grid-template-columns: 1fr; gap: var(--space-8); }
+    .tech__flow .flow__step { grid-template-columns: auto 1fr; }
+    .tech__flow .flow__node { grid-row: span 3; margin-bottom: 0; }
+    .tech__flow .flow__text { grid-column: 2; }
+    .tech__flow .flow__step:not(:last-child)::after {
+      inset-inline-start: calc(var(--space-6) - var(--border-hairline)); inset-inline-end: auto;
+      top: var(--space-12); bottom: calc(-1 * var(--space-8));
+      border-top: 0; border-inline-start: var(--border-thick) dotted var(--color-border-strong);
+    }
+  }
+  @media (min-width: 64em) {
+    .tech { grid-template-columns: 14rem minmax(0, 1fr); gap: var(--space-16); }
+    .tech__toc { position: sticky; top: calc(var(--layout-nav-height) + var(--space-8)); }
+    .tech__split { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+  }
+</style>

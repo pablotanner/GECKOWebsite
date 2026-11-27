@@ -1,0 +1,13 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:02.500
+GECKOGuard's network list. Tap on Wipkingen Airport Free.
+
+00:00:02.500 --> 00:00:11.000
+GECKOGuard joins the network, looks up what is registered here, and follows the login page.
+
+00:00:11.000 --> 00:00:14.000
+"Don't use this network": the login page is not the one registered here.
+
+00:00:14.000 --> 00:00:19.200
+What GECKO saw: the unregistered domain, and the map's answer with valid proofs.

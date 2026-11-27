@@ -36,9 +36,10 @@ export const videos = {
     captions: 'assets/video/attack-without.vtt',
     title: 'Your Phone',
     steps: [
-      { time: '0:03', text: 'Phone joins Wipkingen Airport Free' },
-      { time: '0:08', text: "The attacker's sign-in page opens" },
-      { time: '0:15', text: 'Email and password are typed in' },
+      { time: '0:01', text: 'Taps Wipkingen Airport Free in the WiFi settings' },
+      { time: '0:11', text: 'A certificate warning, only because of our lab’s test certificate. A real attacker with a valid one gets none' },
+      { time: '0:16', text: 'The attacker’s sign-in page asks for card details' },
+      { time: '0:32', text: 'Card number, expiry and CVC are filled in, one tap from the attacker' },
     ],
   },
   attackWith: {
@@ -47,9 +48,10 @@ export const videos = {
     captions: 'assets/video/attack-with.vtt',
     title: 'With GECKOGuard',
     steps: [
-      { time: '0:03', text: 'Phone joins the same network' },
-      { time: '0:06', text: 'GECKOGuard looks up what is registered here' },
-      { time: '0:08', text: 'Conflict shown before anything is typed' },
+      { time: '0:02', text: 'Taps Wipkingen Airport Free in GECKOGuard' },
+      { time: '0:03', text: 'Joins, looks up what is registered here, follows the login page' },
+      { time: '0:11', text: '“Don’t use this network”: the login page isn’t the registered one' },
+      { time: '0:14', text: '“What GECKO saw”: the unregistered domain and the map’s valid proofs' },
     ],
   },
   eduroam: {

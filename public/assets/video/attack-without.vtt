@@ -1,0 +1,16 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:10.500
+WiFi settings on an Android tablet. Tap on Wipkingen Airport Free.
+
+00:00:10.500 --> 00:00:15.500
+A certificate warning appears only because of our lab's test certificate. A real attacker with a valid certificate for its own lookalike domain gets none. Continue anyway via browser.
+
+00:00:15.500 --> 00:00:19.000
+The attacker's sign-in page opens and asks for card details, "to verify your identity".
+
+00:00:19.000 --> 00:00:32.000
+Name, card number, expiry and CVC are typed in.
+
+00:00:32.000 --> 00:00:35.400
+One tap on Connect now, and the card details go to the attacker.

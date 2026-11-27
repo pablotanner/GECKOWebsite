@@ -1,6 +1,7 @@
 ---
 import VideoSlot from '../components/VideoSlot.astro';
 import { videos } from '../config';
+import { url } from '../lib/url';
 ---
 <section class="section section--sunken" id="demo" aria-labelledby="demo-title">
   <div class="container">
@@ -17,6 +18,37 @@ import { videos } from '../config';
       <VideoSlot id="video-without" video={videos.attackWithout} />
       <VideoSlot id="video-with" video={videos.attackWith} verdict="conflict" />
     </div>
+
+    <section class="demo__real" aria-labelledby="demo-real-title">
+      <div class="demo__real-text">
+        <h3 class="title-lg" id="demo-real-title">And when it's the real network</h3>
+        <p>
+          Same place, the airport's own network. GECKOGuard lets you through and shows why it trusts it.
+        </p>
+      </div>
+      <div class="demo__shots">
+        <figure class="shot">
+          <div class="shot__screen">
+            <img
+              src={url('assets/images/app-verified-networks.jpg')}
+              width="800" height="815" loading="lazy" decoding="async"
+              alt="GECKOGuard's network list: a green card reads 'Connected to Wipkingen Airport Free. Its login page matches what the operator registered for this location.' Below, Wipkingen Airport Free is marked Verified."
+            />
+          </div>
+          <figcaption class="caption">Connected and the login page matches what the operator registered.</figcaption>
+        </figure>
+        <figure class="shot">
+          <div class="shot__screen">
+            <img
+              src={url('assets/images/app-verified-details.jpg')}
+              width="800" height="1205" loading="lazy" decoding="async"
+              alt="GECKOGuard's 'What GECKO saw' screen for Wipkingen Airport Free, marked Verified. The login page path ends at login.airport-wipkingen.com, which matches the registration. The map server answer shows signature, inclusion proof and consistency proof all valid and the matched certificate wipkingen-airport-free-2026a."
+            />
+          </div>
+          <figcaption class="caption">Every page the network sent the phone to and the map's answer, with all proofs valid.</figcaption>
+        </figure>
+      </div>
+    </section>
   </div>
 </section>
 
@@ -26,9 +58,36 @@ import { videos } from '../config';
 
 <style>
   .demo__pair { display: grid; gap: var(--space-12); }
+  .demo__real {
+    display: grid; gap: var(--space-8);
+    margin-top: var(--space-16); padding-top: var(--space-12);
+    border-top: var(--border-hairline) solid var(--color-border-default);
+  }
+  .demo__real-text { display: grid; gap: var(--space-3); align-content: start; max-width: var(--measure-lead); }
+  .demo__real-text p { color: var(--color-text-secondary); }
+  .demo__shots { display: grid; gap: var(--space-8); justify-items: center; align-items: start; }
+  .shot { display: grid; gap: var(--space-3); width: min(100%, 17rem); margin: 0; }
+  .shot__screen {
+    position: relative; overflow: hidden;
+    border: var(--border-frame) solid var(--color-surface-device);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface-card);
+    box-shadow: var(--shadow-float);
+  }
+  .shot__screen img { width: 100%; height: auto; }
+  /* The screenshots are cropped: fade the bottom so the screen reads as continuing. */
+  .shot__screen::after {
+    content: ""; position: absolute; inset-inline: 0; bottom: 0; height: var(--space-12);
+    background: linear-gradient(transparent, var(--color-surface-card));
+    pointer-events: none;
+  }
   @media (min-width: 48em) {
     .demo__head { grid-template-columns: 1fr 1fr; align-items: end; gap: var(--space-12); }
     .demo__pair { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-10); }
     .demo__pair :global(.video) { width: min(100%, 22rem); }
+    .demo__shots { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-6); }
+  }
+  @media (min-width: 64em) {
+    .demo__real { grid-template-columns: 4fr 8fr; gap: var(--space-12); }
   }
 </style>

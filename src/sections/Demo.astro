@@ -31,7 +31,7 @@ import { url } from '../lib/url';
           <div class="shot__screen">
             <img
               src={url('assets/images/app-verified-networks.jpg')}
-              width="800" height="815" loading="lazy" decoding="async"
+              width="800" height="836" loading="lazy" decoding="async"
               alt="GECKOGuard's network list: a green card reads 'Connected to Wipkingen Airport Free. Its login page matches what the operator registered for this location.' Below, Wipkingen Airport Free is marked Verified."
             />
           </div>
@@ -41,7 +41,7 @@ import { url } from '../lib/url';
           <div class="shot__screen">
             <img
               src={url('assets/images/app-verified-details.jpg')}
-              width="800" height="1205" loading="lazy" decoding="async"
+              width="800" height="1222" loading="lazy" decoding="async"
               alt="GECKOGuard's 'What GECKO saw' screen for Wipkingen Airport Free, marked Verified. The login page path ends at login.airport-wipkingen.com, which matches the registration. The map server answer shows signature, inclusion proof and consistency proof all valid and the matched certificate wipkingen-airport-free-2026a."
             />
           </div>
@@ -77,7 +77,7 @@ import { url } from '../lib/url';
   .shot__screen img { width: 100%; height: auto; }
   /* The screenshots are cropped: fade the bottom so the screen reads as continuing. */
   .shot__screen::after {
-    content: ""; position: absolute; inset-inline: 0; bottom: 0; height: var(--space-12);
+    content: ""; position: absolute; inset-inline: 0; bottom: 0; height: var(--space-5);
     background: linear-gradient(transparent, var(--color-surface-card));
     pointer-events: none;
   }
